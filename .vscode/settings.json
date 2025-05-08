@@ -1,0 +1,13 @@
+{
+    "workbench.colorTheme": "Monospace Light",
+    "cmake.showOptionsMovedNotification": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "git.enableSmartCommit": true,
+    "git.confirmSync": false,
+    "workbench.iconTheme": "monospace-icons",
+    "window.menuBarVisibility": "visible",
+    "terminal.integrated.focusAfterRun": "terminal"
+}
