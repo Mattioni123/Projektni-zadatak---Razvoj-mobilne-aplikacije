@@ -1,0 +1,96 @@
+/* src/styles/global.css */
+:root {
+    --font-family: "Poppins", sans-serif;
+  
+    /* Light Theme */
+    --background-primary-light: #ffffff;
+    --background-secondary-light: #f1f3f4;
+    --text-primary-light: #202124;
+    --text-secondary-light: #5f6368;
+    --border-color-light: #dadce0;
+    --note-bg-light: #ffffff;
+    --note-shadow-light: 0 1px 2px 0 rgba(60,64,67,0.302), 0 2px 6px 2px rgba(60,64,67,0.149);
+    --primary-color-light: #8c53ff; /* Your purple */
+    --primary-hover-light: #7a48e0;
+    --button-text-light: #ffffff;
+  
+    /* Dark Theme */
+    --background-primary-dark: #202124;
+    --background-secondary-dark: #303134; /* Adjusted for more contrast */
+    --text-primary-dark: #e8eaed;
+    --text-secondary-dark: #bdc1c6;
+    --border-color-dark: #5f6368;
+    --note-bg-dark: #3c4043; /* Darker note background */
+    --note-shadow-dark: 0 1px 2px 0 rgba(0,0,0,0.302), 0 2px 6px 2px rgba(0,0,0,0.149);
+    --primary-color-dark: #ab8eff; /* Lighter purple for dark mode */
+    --primary-hover-dark: #9f7cf0;
+    --button-text-dark: #202124;
+  }
+  
+  [data-theme="light"] {
+    --background-primary: var(--background-primary-light);
+    --background-secondary: var(--background-secondary-light);
+    --text-primary: var(--text-primary-light);
+    --text-secondary: var(--text-secondary-light);
+    --border-color: var(--border-color-light);
+    --note-bg: var(--note-bg-light);
+    --note-shadow: var(--note-shadow-light);
+    --primary-color: var(--primary-color-light);
+    --primary-hover: var(--primary-hover-light);
+    --button-text-color: var(--button-text-light);
+  }
+  
+  [data-theme="dark"] {
+    --background-primary: var(--background-primary-dark);
+    --background-secondary: var(--background-secondary-dark);
+    --text-primary: var(--text-primary-dark);
+    --text-secondary: var(--text-secondary-dark);
+    --border-color: var(--border-color-dark);
+    --note-bg: var(--note-bg-dark);
+    --note-shadow: var(--note-shadow-dark);
+    --primary-color: var(--primary-color-dark);
+    --primary-hover: var(--primary-hover-dark);
+    --button-text-color: var(--button-text-dark);
+  }
+  
+  body {
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    line-height: 1.6;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  /* Scrollbar Styling */
+  body::-webkit-scrollbar,
+  textarea::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  body::-webkit-scrollbar-track,
+  textarea::-webkit-scrollbar-track {
+    background: var(--background-secondary);
+    border-radius: 4px;
+  }
+  
+  body::-webkit-scrollbar-thumb,
+  textarea::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+  }
+  
+  body::-webkit-scrollbar-thumb:hover,
+  textarea::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-hover);
+  }
+  
+  /* Hide scrollbar for Firefox */
+  body, textarea {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--background-secondary);
+  }

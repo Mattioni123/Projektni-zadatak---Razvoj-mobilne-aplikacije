@@ -1,0 +1,47 @@
+/* src/components/Notes/NotesGrid.module.css */
+.notesGrid {
+    padding: 20px;
+    column-gap: 15px;
+    /* Adjust column count based on screen size for responsiveness */
+  }
+  
+  /* Small screens (mobile) */
+  @media (max-width: 600px) {
+    .notesGrid {
+      column-count: 1;
+    }
+  }
+  
+  /* Medium screens (tablets) */
+  @media (min-width: 601px) and (max-width: 900px) {
+    .notesGrid {
+      column-count: 2;
+    }
+  }
+  
+  /* Large screens (desktops) */
+  @media (min-width: 901px) and (max-width: 1200px) {
+    .notesGrid {
+      column-count: 3;
+    }
+  }
+  
+  /* Extra large screens */
+  @media (min-width: 1201px) {
+    .notesGrid {
+      column-count: 4; /* Or more, depending on desired density */
+    }
+  }
+  
+  /* Ensure cards don't break across columns unnaturally */
+  .notesGrid > div { /* Targets NoteCard directly */
+    break-inside: avoid-column;
+    margin-bottom: 15px; /* Spacing between cards in the same column flow */
+  }
+  
+  .noNotesMessage {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.2em;
+    padding: 50px;
+  }

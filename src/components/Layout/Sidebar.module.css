@@ -1,0 +1,159 @@
+/* src/components/Layout/Sidebar.module.css */
+.sidebar {
+  width: 260px;
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-right: 1px solid var(--border-color);
+  transition: width 0.3s ease-in-out, padding 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  position: relative; /* For positioning toggle button */
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
+}
+
+.sidebar.closed {
+  width: 0;
+  padding: 20px 0;
+  overflow: hidden;
+  opacity: 0;
+  border-right: none;
+}
+.sidebar.open {
+  width: 260px; /* Or your desired width */
+  opacity: 1;
+}
+
+
+.sidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logoSection h2 {
+  margin: 0; /* Removed bottom margin as it's handled by sidebarHeader */
+  font-size: 1.8em;
+  color: var(--primary-color);
+}
+
+.sidebarToggleButton, .sidebarToggleButtonCollapsed {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5em;
+  cursor: pointer;
+  padding: 5px;
+}
+.sidebarToggleButton:hover, .sidebarToggleButtonCollapsed:hover {
+  color: var(--primary-color);
+}
+
+.sidebarToggleButtonCollapsed {
+  position: fixed; /* Or absolute relative to a wrapper */
+  top: 15px;
+  left: 15px;
+  z-index: 1100; /* Above other content if sidebar is fully hidden */
+  background-color: var(--background-secondary);
+  padding: 10px;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+  
+  .nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .nav li {
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+  }
+  
+  .nav li:hover, .nav li.active {
+    background-color: var(--primary-color-light); /* A light primary color or primary with opacity */
+    color: var(--button-text-color);
+  }
+  
+  [data-theme="dark"] .nav li:hover, [data-theme="dark"] .nav li.active {
+      background-color: var(--primary-color-dark);
+      color: var(--button-text-dark);
+  }
+  
+  
+  .settingsSection {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+  }
+  
+  .settingItem, .languageSwitcher, .userInfo {
+    padding: 10px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9em;
+  }
+  .settingItem:hover {
+    color: var(--primary-color);
+  }
+  
+  .languageSwitcher button {
+    background: none;
+    border: 1px solid var(--text-secondary);
+    color: var(--text-secondary);
+    padding: 3px 6px;
+    margin-left: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .languageSwitcher button:disabled {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    cursor: not-allowed;
+  }
+  .languageSwitcher button:hover:not(:disabled) {
+    background-color: var(--border-color);
+  }
+  
+  
+  .userInfo {
+    margin-bottom: 10px;
+    font-size: 0.9em;
+  }
+  
+  .userInfo span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Adjust as needed */
+  }
+  
+  .logoutButton {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .logoutButton:hover {
+    background-color: var(--primary-hover);
+  }

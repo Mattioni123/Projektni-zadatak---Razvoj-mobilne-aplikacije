@@ -1,134 +1,86 @@
-import { useState, useEffect } from "react";
-import "./App.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+// src/App.jsx
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { LayoutProvider, useLayout } from "./contexts/LayoutContext";
+import Sidebar from "./components/Layout/Sidebar";
+import LoginPage from "./components/Auth/LoginPage";
+import HomePage from "./pages/HomePage";
+import "./styles/global.css";
+import appStyles from "./App.module.css"; // Renamed to avoid conflict if you have styles.appContainer elsewhere
+import sidebarStyles from "./components/Layout/Sidebar.module.css"; // To access .sidebarToggleButtonCollapsed
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Import FontAwesomeIcon
+import { faBars } from "@fortawesome/free-solid-svg-icons"; // Import faBars
 
-const NotePopup = ({ isEdit, noteText, onTextChange, onSave, onClose }) => (
-  <div className="popupContainer">
-    <div className="popup">
-      <h1>{isEdit ? "Edit Note" : "New Note"}</h1>
-      <textarea
-        value={noteText}
-        onChange={(e) => onTextChange(e.target.value)}
-        placeholder="Enter your note..."
-        autoFocus
-      />
-      <div className="btn-container">
-        <button onClick={onSave}>{isEdit ? "Done" : "Create Note"}</button>
-        <button onClick={onClose}>Close</button>
-      </div>
-    </div>
-  </div>
-);
+function AppContent() {
+  const { currentUser, loading } = useAuth();
+  const { isSidebarOpen, toggleSidebar } = useLayout(); // Get toggleSidebar here
 
-export default function App() {
-  const [notes, setNotes] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
-  const [showEditPopup, setShowEditPopup] = useState(false);
-  const [noteText, setNoteText] = useState("");
-  const [editingNoteId, setEditingNoteId] = useState(null);
-
-  useEffect(() => {
-    const storedNotes = JSON.parse(localStorage.getItem("notes")) || [];
-    setNotes(storedNotes);
-  }, []);
-
-  const saveNotesToStorage = (updatedNotes) => {
-    localStorage.setItem("notes", JSON.stringify(updatedNotes));
-    setNotes(updatedNotes);
-  };
-
-  const createNote = () => {
-    if (noteText.trim() !== "") {
-      const newNote = {
-        id: new Date().getTime(),
-        text: noteText,
-      };
-      const updatedNotes = [...notes, newNote];
-      saveNotesToStorage(updatedNotes);
-      setNoteText("");
-      setShowPopup(false);
-    }
-  };
-
-  const editNote = (noteId) => {
-    const noteToEdit = notes.find((note) => note.id === noteId);
-    if (noteToEdit) {
-      setNoteText(noteToEdit.text);
-      setEditingNoteId(noteId);
-      setShowEditPopup(true);
-    }
-  };
-
-  const updateNote = () => {
-    if (noteText.trim() !== "") {
-      const updatedNotes = notes.map((note) =>
-        note.id === editingNoteId ? { ...note, text: noteText } : note
-      );
-      saveNotesToStorage(updatedNotes);
-      setNoteText("");
-      setEditingNoteId(null);
-      setShowEditPopup(false);
-    }
-  };
-
-  const deleteNote = (noteId) => {
-    const updatedNotes = notes.filter((note) => note.id !== noteId);
-    saveNotesToStorage(updatedNotes);
-  };
-
-  const closePopup = () => {
-    setShowPopup(false);
-    setShowEditPopup(false);
-    setNoteText("");
-  };
+  if (loading) {
+    return <div>Loading application...</div>;
+  }
 
   return (
-    <div id="container">
-      <div id="list-header">
-        <div id="addNoteDiv" onClick={() => setShowPopup(true)}>
-          <FontAwesomeIcon icon={faPlus} />
-        </div>
-        <div className="blankDiv"></div>
-        <div className="blankDiv"></div>
-      </div>
-
-      <div id="list-container">
-        <ul id="notes-list">
-          {notes.map((note) => (
-            <li key={note.id}>
-              <span>{note.text}</span>
-              <div className="noteBtns-container">
-                <button onClick={() => editNote(note.id)}>
-                  <FontAwesomeIcon icon={faPen} />
-                </button>
-                <button onClick={() => deleteNote(note.id)}>
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {showPopup && (
-        <NotePopup
-          isEdit={false}
-          noteText={noteText}
-          onTextChange={setNoteText}
-          onSave={createNote}
-          onClose={closePopup}
-        />
-      )}
-      {showEditPopup && (
-        <NotePopup
-          isEdit={true}
-          noteText={noteText}
-          onTextChange={setNoteText}
-          onSave={updateNote}
-          onClose={closePopup}
-        />
-      )}
+    <div
+      className={`${appStyles.appContainer} ${
+        isSidebarOpen ? appStyles.sidebarOpen : appStyles.sidebarClosed
+      }`}
+    >
+      {currentUser && isSidebarOpen && <Sidebar />}{" "}
+      {/* Conditionally render full sidebar */}
+      {currentUser &&
+        !isSidebarOpen /* Render only the toggle button when closed */ && (
+          <button
+            onClick={toggleSidebar}
+            className={sidebarStyles.sidebarToggleButtonCollapsed}
+          >
+            {" "}
+            {/* Use toggleSidebar from context */}
+            <FontAwesomeIcon icon={faBars} />
+          </button>
+        )}
+      <main
+        className={`${appStyles.mainContent} ${
+          isSidebarOpen
+            ? appStyles.mainContentSidebarOpen
+            : appStyles.mainContentSidebarClosed
+        }`}
+      >
+        <Routes>
+          <Route
+            path="/"
+            element={
+              currentUser ? <HomePage /> : <Navigate to="/login" replace />
+            }
+          />
+          <Route
+            path="/login"
+            element={!currentUser ? <LoginPage /> : <Navigate to="/" replace />}
+          />
+        </Routes>
+      </main>
     </div>
   );
 }
+
+function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <ThemeProvider>
+          <LayoutProvider>
+            <AppContent />
+          </LayoutProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </Router>
+  );
+}
+
+export default App;

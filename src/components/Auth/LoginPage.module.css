@@ -1,0 +1,45 @@
+/* src/components/Auth/LoginPage.module.css */
+.loginPage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--background-primary);
+  }
+  
+  .loginBox {
+    background-color: var(--background-secondary);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: var(--note-shadow);
+    text-align: center;
+    color: var(--text-primary);
+  }
+  
+  .loginBox h1 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+  }
+  
+  .loginBox p {
+    margin-bottom: 30px;
+    color: var(--text-secondary);
+  }
+  
+  .loginButton {
+    background-color: #4285F4; /* Google's blue */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .loginButton:hover {
+    background-color: #357ae8;
+  }

@@ -1,0 +1,95 @@
+/* src/components/Notes/NoteCard.module.css */
+.noteCard {
+    background-color: var(--note-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px; /* For single column, Masonry will handle spacing */
+    box-shadow: var(--note-shadow);
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
+    word-wrap: break-word; /* Ensure long words break */
+    overflow-wrap: break-word;
+    min-height: 120px; /* Minimum height for a card */
+  }
+  
+  .noteCard:hover {
+    box-shadow: 0 2px 4px rgba(60,64,67,0.302), 0 4px 8px 3px rgba(60,64,67,0.149);
+  }
+  [data-theme="dark"] .noteCard:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.302), 0 4px 8px 3px rgba(0,0,0,0.149);
+  }
+  
+  .noteTitle {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+  
+  .noteText {
+    font-size: 0.95em;
+    color: var(--text-secondary);
+    white-space: pre-wrap; /* Preserve line breaks */
+    flex-grow: 1;
+    margin-bottom: 10px;
+    max-height: 200px; /* Limit text height, add scroll if needed */
+    overflow-y: auto; /* Scroll for long text */
+  }
+  
+  .noteText::-webkit-scrollbar {
+    width: 6px;
+  }
+  .noteText::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+  }
+  .noteText::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  
+  .noteMeta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    opacity: 0.9;
+  }
+  
+  .creatorName {
+    font-weight: 500;
+  }
+  
+  .noteFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 10px;
+    /* border-top: 1px dashed var(--border-color); Optional separator */
+  }
+  
+  .noteDate {
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    opacity: 0.7;
+  }
+  
+  .noteActions button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 8px;
+    font-size: 0.9em;
+  }
+  
+  .noteActions button:hover {
+    color: var(--primary-color);
+  }

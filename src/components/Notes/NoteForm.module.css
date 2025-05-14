@@ -1,0 +1,112 @@
+/* src/components/Notes/NoteForm.module.css */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    background-color: var(--background-secondary);
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 550px;
+    position: relative;
+  }
+  
+  .modalContent h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    font-size: 1.6em;
+  }
+  
+  .closeButtonTop {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .closeButtonTop:hover {
+    color: var(--text-primary);
+  }
+  
+  
+  .titleInput,
+  .contentInput {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1em;
+  }
+  
+  .titleInput {
+    font-weight: bold;
+  }
+  
+  .contentInput {
+    resize: vertical;
+    min-height: 120px;
+  }
+  
+  .buttonContainer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .saveButton,
+  .cancelButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .saveButton {
+    background-color: var(--primary-color);
+    color: var(--button-text-color);
+  }
+  
+  .saveButton:hover {
+    background-color: var(--primary-hover);
+  }
+  
+  .cancelButton {
+    background-color: var(--border-color);
+    color: var(--text-secondary);
+  }
+  [data-theme="dark"] .cancelButton {
+      color: var(--text-primary);
+  }
+  
+  
+  .cancelButton:hover {
+    background-color: var(--text-secondary);
+    color: var(--background-primary);
+  }
+  [data-theme="dark"] .cancelButton:hover {
+    background-color: var(--border-color-dark);
+    filter: brightness(1.2);
+  }

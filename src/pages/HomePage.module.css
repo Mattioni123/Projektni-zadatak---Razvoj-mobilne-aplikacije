@@ -1,0 +1,16 @@
+/* src/pages/HomePage.module.css */
+.homePage {
+    flex-grow: 1; /* Takes remaining space in flex container */
+    overflow-y: auto; /* Allows scrolling for notes content */
+    height: 100vh; /* Make sure it uses full viewport height within its container */
+    position: relative; /* For positioning AddNoteButton if needed within this container */
+  }
+  
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 1.2em;
+    color: var(--text-secondary);
+  }
