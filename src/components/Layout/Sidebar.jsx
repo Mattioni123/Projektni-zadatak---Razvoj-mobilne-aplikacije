@@ -1,5 +1,5 @@
 // src/components/Layout/Sidebar.jsx
-import React from "react"; // Removed useState and useEffect for isMobileView here
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,34 +14,52 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useLayout } from "../../contexts/LayoutContext";
-import { logOut } from "../../firebase";
+import { logOut } from "../../firebase"; // Firebase logout function
 import styles from "./Sidebar.module.css";
 
 const Sidebar = ({ isOpen }) => {
-  // Accept isOpen prop
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { toggleSidebar } = useLayout(); // For the "X" button
+  const { toggleSidebar, setIsSidebarOpen } = useLayout(); // Get setIsSidebarOpen if mobile needs to close sidebar on logout
 
   const handleLogout = async () => {
-    /* ... */
+    try {
+      await logOut(); // Call the imported Firebase logout function
+      // Optionally, if on mobile and sidebar is an overlay, close it
+      if (window.innerWidth < 768 && typeof setIsSidebarOpen === "function") {
+        // Check if setIsSidebarOpen is available
+        setIsSidebarOpen(false);
+      }
+    } catch (error) {
+      console.error("Failed to log out", error);
+      // You might want to show an error message to the user here
+    }
   };
+
   const changeLanguage = (lng) => {
-    /* ... */
+    if (i18n.language !== lng) {
+      // Only change if different
+      i18n
+        .changeLanguage(lng)
+        .then(() => {
+          localStorage.setItem("language", lng);
+          console.log("Language changed to:", lng);
+        })
+        .catch((err) => {
+          console.error("Error changing language:", err);
+        });
+    }
   };
 
   return (
     <div
       className={`${styles.sidebar} ${isOpen ? styles.open : styles.closed}`}
     >
-      {" "}
-      {/* Apply .open or .closed */}
       <div className={styles.sidebarHeader}>
         <div className={styles.logoSection}>
           <h2>{t("appName")}</h2>
         </div>
-        {/* "X" button to close the sidebar */}
         <button onClick={toggleSidebar} className={styles.sidebarToggleButton}>
           <FontAwesomeIcon icon={faTimes} />
         </button>
@@ -49,6 +67,8 @@ const Sidebar = ({ isOpen }) => {
       <nav className={styles.nav}>
         <ul>
           <li className={styles.active}>
+            {" "}
+            {/* Consider making 'active' dynamic if you add more nav items */}
             <FontAwesomeIcon icon={faStickyNote} /> {t("notes")}
           </li>
         </ul>

@@ -1,42 +1,47 @@
 /* src/components/Notes/NoteCard.module.css */
+.noteCardWrapper {
+  display: flex;
+  flex-direction: column;
+  break-inside: avoid-column;
+  margin-bottom: 20px; /* << INCREASED MARGIN for spacing between cards/wrappers */
+  /* The wrapper itself should NOT have a border or shadow if the .noteCard inside does */
+}
+
 .noteCard {
-    background-color: var(--note-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px; /* For single column, Masonry will handle spacing */
-    box-shadow: var(--note-shadow);
-    display: flex;
-    flex-direction: column;
-    transition: box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease;
-    word-wrap: break-word; /* Ensure long words break */
+  background-color: var(--note-bg);
+  border: 1px solid var(--border-color); /* << ENSURE BORDER IS VISIBLE */
+  border-radius: 10px; /* << INCREASED BORDER RADIUS */
+  padding: 18px;       /* << INCREASED PADDING */
+  box-shadow: var(--note-shadow); /* Ensure shadow is applied and visible */
+  display: flex;
+  flex-direction: column;
+  min-height: 120px; /* Keep a minimum height */
+  position: relative; /* For comment count badge */
+  transition: box-shadow 0.2s ease;
+  /* No margin-bottom here, as wrapper handles it */
+}
+.noteCard:hover { /* Subtle hover effect on the card itself */
+  box-shadow: 0 3px 6px rgba(60,64,67,0.302), 0 5px 12px 4px rgba(60,64,67,0.149);
+}
+[data-theme="dark"] .noteCard:hover {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.302), 0 5px 12px 4px rgba(0,0,0,0.149);
+}
+
+
+.noteTitle {
+  font-size: 1.15em; /* Slightly larger */
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 10px; /* Space below title */
+  color: var(--text-primary);
+  word-break: break-word; /* Allow long titles to break */
+}
+  
+  .noteText { /* The <p> tag itself inside the container */
+    white-space: pre-wrap;
+    word-wrap: break-word; /* Alias for overflow-wrap */
     overflow-wrap: break-word;
-    min-height: 120px; /* Minimum height for a card */
-  }
-  
-  .noteCard:hover {
-    box-shadow: 0 2px 4px rgba(60,64,67,0.302), 0 4px 8px 3px rgba(60,64,67,0.149);
-  }
-  [data-theme="dark"] .noteCard:hover {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.302), 0 4px 8px 3px rgba(0,0,0,0.149);
-  }
-  
-  .noteTitle {
-    font-size: 1.1em;
-    font-weight: 600;
-    margin-top: 0;
-    margin-bottom: 8px;
-    color: var(--text-primary);
-  }
-  
-  .noteText {
-    font-size: 0.95em;
-    color: var(--text-secondary);
-    white-space: pre-wrap; /* Preserve line breaks */
-    flex-grow: 1;
-    margin-bottom: 10px;
-    max-height: 200px; /* Limit text height, add scroll if needed */
-    overflow-y: auto; /* Scroll for long text */
+    margin: 0; /* Remove default p margin */
   }
   
   .noteText::-webkit-scrollbar {
@@ -54,10 +59,10 @@
   .noteMeta {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px; /* Slightly more gap */
     font-size: 0.8em;
     color: var(--text-secondary);
-    margin-bottom: 10px;
+    margin-bottom: 12px; /* Space before footer */
     opacity: 0.9;
   }
   
@@ -69,9 +74,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto;
-    padding-top: 10px;
-    /* border-top: 1px dashed var(--border-color); Optional separator */
+    margin-top: auto; /* Pushes footer to bottom */
+    padding-top: 10px; /* Space above footer elements */
+    border-top: 1px solid var(--border-color-light); /* Lighter border for footer separator */
+    /* On dark theme, this might need to be var(--border-color) or a specific dark theme light border */
+  }
+  [data-theme="dark"] .noteFooter {
+      border-top: 1px solid var(--border-color);
   }
   
   .noteDate {
@@ -80,16 +89,186 @@
     opacity: 0.7;
   }
   
+  .noteActions {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Spacing between action buttons */
+  }
+
   .noteActions button {
     background: none;
     border: none;
     color: var(--text-secondary);
     cursor: pointer;
-    padding: 5px;
-    margin-left: 8px;
-    font-size: 0.9em;
+    padding: 6px; /* Tap area */
+    font-size: 0.95em; /* Icon size */
+    border-radius: 50%; /* Make icon buttons circular for better look */
+    width: 32px; /* Consistent size */
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  
   .noteActions button:hover {
     color: var(--primary-color);
+    background-color: var(--primary-color-transparent); /* Use transparent primary for hover bg */
   }
+
+  .noteTextContainer {
+    flex-grow: 1;
+    max-height: 250px; /* Adjust as needed, maybe more for desktop */
+    overflow-y: auto;
+    margin-bottom: 12px; /* Space before meta */
+    color: var(--text-secondary); /* Moved text color here */
+    font-size: 0.95em; /* Base text size */
+    line-height: 1.5; /* Improve readability */
+  }
+  .noteTextContainer::-webkit-scrollbar { width: 6px; }
+  .noteTextContainer::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+  .noteTextContainer::-webkit-scrollbar-track { background: transparent; }
+
+
+.commentCountBadge {
+  position: absolute;
+  top: 8px;  /* Adjust position relative to padding of noteCard */
+  right: 8px; /* Adjust position */
+  background-color: var(--primary-color);
+  color: var(--button-text-color);
+  border-radius: 50%;
+  min-width: 20px; /* Ensure it's circular even with single digit */
+  height: 20px;
+  font-size: 0.75em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  line-height: 1; /* For better vertical centering of text */
+  padding: 2px; /* Small padding inside badge */
+  z-index: 1; /* Above other card content if necessary */
+}
+
+/* Comments Section Styling */
+.commentsSection {
+  background-color: var(--note-bg); /* Match note background or slightly different */
+  /* border-top: 1px solid var(--border-color); Remove if card has bottom border */
+  border-left: 1px solid var(--border-color); /* To connect with card border */
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  margin-top: -1px; /* Overlap with card's bottom border for seamless look */
+  border-bottom-left-radius: 10px; /* Match card's radius */
+  border-bottom-right-radius: 10px;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out 0.1s, padding 0.3s ease-in-out;
+  padding: 0 18px; /* Match card's horizontal padding when closed */
+  /* box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); Removed, rely on borders */
+}
+
+.commentsSection.open {
+  max-height: 450px; /* Increased max height */
+  opacity: 1;
+  padding: 18px; /* Match card's horizontal padding when open */
+  padding-top: 15px; /* Specific top padding for content */
+  overflow-y: auto;
+}
+.commentsSection.open::-webkit-scrollbar { width: 6px; }
+.commentsSection.open::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
+
+.loadingComments, .noComments {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+  padding: 10px 0;
+}
+
+.commentsList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0; /* Space before add comment form */
+}
+
+.commentItem {
+  padding: 12px 0; /* Increased padding */
+  border-bottom: 1px solid var(--border-color-light); /* Lighter separator */
+}
+[data-theme="dark"] .commentItem {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.commentItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.commentAuthor {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9em;
+}
+
+.commentDate {
+  font-size: 0.75em;
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+.commentText {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0;
+}
+
+.addCommentForm {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start; /* Align textarea and button */
+}
+
+.commentInput {
+  flex-grow: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9em;
+  resize: vertical;
+  min-height: 40px; /* Start small, can grow */
+}
+
+.sendCommentButton {
+  background-color: var(--primary-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  height: 40px; /* Match initial textarea height */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+.sendCommentButton:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+.sendCommentButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.sendCommentButton svg {
+  font-size: 1.1em;
+}

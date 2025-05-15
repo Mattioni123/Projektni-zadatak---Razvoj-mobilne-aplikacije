@@ -1,10 +1,13 @@
 /* src/components/Notes/NotesGrid.module.css */
 .notesGrid {
     padding: 20px;
-    column-gap: 15px;
+    column-gap: 20px;
     /* Adjust column count based on screen size for responsiveness */
   }
   
+  @media (max-width: 480px) { .notesGrid { column-count: 1; padding: 15px; column-gap: 0; } }
+  @media (min-width: 481px) and (max-width: 768px) { .notesGrid { column-count: 2; column-gap: 15px; } }
+
   /* Small screens (mobile) */
   @media (max-width: 600px) {
     .notesGrid {
@@ -34,7 +37,7 @@
   }
   
   /* Ensure cards don't break across columns unnaturally */
-  .notesGrid > div { /* Targets NoteCard directly */
+  .notesGrid > .noteCardWrapper { /* Targets NoteCard directly */
     break-inside: avoid-column;
     margin-bottom: 15px; /* Spacing between cards in the same column flow */
   }

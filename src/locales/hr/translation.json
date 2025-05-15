@@ -21,5 +21,9 @@
   "searchNotes": "Pretraži bilješke...",
   "lightMode": "Svijetli Način",
   "darkMode": "Tamni Način",
-  "language": "Jezik"
+  "language": "Jezik",
+  "comments": "Komentari",
+  "loadingComments": "Učitavanje komentara",
+  "noCommentsYet": "Nema komentara",
+  "writeCommentPlaceholder": "Komentiraj"
 }

@@ -12,6 +12,8 @@
     --note-shadow-light: 0 1px 2px 0 rgba(60,64,67,0.302), 0 2px 6px 2px rgba(60,64,67,0.149);
     --primary-color-light: #8c53ff; /* Your purple */
     --primary-hover-light: #7a48e0;
+    --primary-color-light-transparent: rgba(140, 83, 255, 0.1); /* Adjust alpha as needed */
+    --border-color-light: #e0e0e0; 
     --button-text-light: #ffffff;
   
     /* Dark Theme */
@@ -24,6 +26,7 @@
     --note-shadow-dark: 0 1px 2px 0 rgba(0,0,0,0.302), 0 2px 6px 2px rgba(0,0,0,0.149);
     --primary-color-dark: #ab8eff; /* Lighter purple for dark mode */
     --primary-hover-dark: #9f7cf0;
+    --primary-color-dark-transparent: rgba(171, 142, 255, 0.15); 
     --button-text-dark: #202124;
   }
   

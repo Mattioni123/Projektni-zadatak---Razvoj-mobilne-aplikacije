@@ -21,5 +21,9 @@
   "searchNotes": "Search notes...",
   "lightMode": "Light Mode",
   "darkMode": "Dark Mode",
-  "language": "Language"
+  "language": "Language",
+  "comments": "Comments",
+  "loadingComments": "Loading comments",
+  "noCommentsYet": "No comments yet",
+  "writeCommentPlaceholder": "Comment"
 }
