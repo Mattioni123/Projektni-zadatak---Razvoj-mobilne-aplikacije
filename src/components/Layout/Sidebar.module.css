@@ -1,16 +1,17 @@
 /* src/components/Layout/Sidebar.module.css */
 .sidebar {
-  width: 260px;
   background-color: var(--background-secondary);
   color: var(--text-primary);
   height: 100vh;
   display: flex;
   flex-direction: column;
   padding: 20px;
-  border-right: 1px solid var(--border-color);
-  transition: width 0.3s ease-in-out, padding 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  position: relative; /* For positioning toggle button */
-  flex-shrink: 0; /* Prevent sidebar from shrinking */
+  width: 260px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out, padding 0.3s ease-in-out;
+  z-index: 1200;
+  box-sizing: border-box;
+  overflow-x: hidden; /* Prevent content from spilling during width transition */
 }
 
 .sidebar.closed {
@@ -30,13 +31,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  min-width: calc(260px - 40px);
 }
 
 .logoSection h2 {
   margin: 0; /* Removed bottom margin as it's handled by sidebarHeader */
-  font-size: 1.8em;
+  font-size: 1.7em;
   color: var(--primary-color);
+  white-space: nowrap;
 }
 
 .sidebarToggleButton, .sidebarToggleButtonCollapsed {
@@ -46,6 +49,7 @@
   font-size: 1.5em;
   cursor: pointer;
   padding: 5px;
+  margin-left: auto;
 }
 .sidebarToggleButton:hover, .sidebarToggleButtonCollapsed:hover {
   color: var(--primary-color);
@@ -55,11 +59,22 @@
   position: fixed; /* Or absolute relative to a wrapper */
   top: 15px;
   left: 15px;
-  z-index: 1100; /* Above other content if sidebar is fully hidden */
+  z-index: 1201; /* Above other content if sidebar is fully hidden */
   background-color: var(--background-secondary);
-  padding: 10px;
+  border: none;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4em;
+  cursor: pointer;
+}
+
+.sidebarToggleButtonCollapsed:hover {
+  color: var(--primary-color);
 }
   
   .nav ul {
@@ -69,19 +84,21 @@
   }
   
   .nav li {
-    padding: 12px 15px;
-    margin-bottom: 8px;
+    padding: 14px 15px;
+    margin-bottom: 10px;
     border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 10px;
     font-weight: 500;
+    font-size: 1.05em
   }
   
   .nav li:hover, .nav li.active {
     background-color: var(--primary-color-light); /* A light primary color or primary with opacity */
     color: var(--button-text-color);
+    border-radius: 8px;
   }
   
   [data-theme="dark"] .nav li:hover, [data-theme="dark"] .nav li.active {
@@ -95,14 +112,19 @@
     padding-top: 20px;
     border-top: 1px solid var(--border-color);
   }
+
+  .nav, .settingsSection {
+    min-width: calc(260px - 40px); /* Or a suitable fixed min-width */
+    white-space: nowrap; /* Prevent items from wrapping during collapse */
+}
   
   .settingItem, .languageSwitcher, .userInfo {
-    padding: 10px 0;
+    padding: 12px 0;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 0.9em;
+    gap: 12px;
+    font-size: 0.95em;
   }
   .settingItem:hover {
     color: var(--primary-color);
@@ -112,7 +134,7 @@
     background: none;
     border: 1px solid var(--text-secondary);
     color: var(--text-secondary);
-    padding: 3px 6px;
+    padding: 5px 8px;
     margin-left: 5px;
     border-radius: 4px;
     cursor: pointer;
@@ -141,7 +163,7 @@
   
   .logoutButton {
     width: 100%;
-    padding: 10px;
+    padding: 14px;
     background-color: var(--primary-color);
     color: var(--button-text-color);
     border: none;
@@ -152,8 +174,52 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+    margin-top: 10px;
+    font-size: 1em;
   }
   
   .logoutButton:hover {
     background-color: var(--primary-hover);
+  }
+
+  @media (max-width: 768px) { /* Mobile: Acts as an overlay */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      border-right: none;
+      height: 100vh;
+      width: 80vw; /* Or a percentage like 80vw for wider sidebars */
+      max-width: 300vw; /* Ensure it doesn't exceed viewport */
+      transform: translateX(0); /* Should be visible when rendered */
+      background-color: var(--background-secondary); /* Ensure this is opaque */
+      border-right: none; /* Good */
+      box-shadow: 2px 0 10px rgba(0,0,0,0.2); /* Good */
+      z-index: 1200; /* Ensure it's on top */
+    }
+    .sidebar.closed { /* When isOpen is false on mobile */
+      transform: translateX(-100%);
+    }
+    .sidebar.open { /* When isOpen is true on mobile */
+      transform: translateX(0);
+    }
+  }
+
+  @media (min-width: 769px) { /* Desktop: Static, part of layout, collapses in width */
+    .sidebar {
+      position: relative;
+      transform: translateX(0); /* No horizontal transform on desktop */
+      border-right: 1px solid var(--border-color);
+    }
+    .sidebar.closed { /* When isOpen is false on desktop */
+      width: 0;
+      padding-left: 0;
+      padding-right: 0;
+      /* border-right: none; /* Optionally hide border when collapsed */
+    }
+    .sidebar.open { /* When isOpen is true on desktop */
+      width: 260px;
+      padding: 20px; /* Ensure padding is restored */
+      /* border-right: 1px solid var(--border-color); /* Ensure border is restored */
+    }
   }

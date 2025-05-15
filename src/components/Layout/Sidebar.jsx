@@ -1,4 +1,5 @@
-import React from "react";
+// src/components/Layout/Sidebar.jsx
+import React from "react"; // Removed useState and useEffect for isMobileView here
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,55 +9,39 @@ import {
   faLanguage,
   faMoon,
   faSun,
-  faBars,
-  faTimes, // Added faBars, faTimes for toggle
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
-import { useLayout } from "../../contexts/LayoutContext"; // Import useLayout
+import { useLayout } from "../../contexts/LayoutContext";
 import { logOut } from "../../firebase";
 import styles from "./Sidebar.module.css";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen }) => {
+  // Accept isOpen prop
   const { t, i18n } = useTranslation();
   const { currentUser } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { isSidebarOpen, toggleSidebar } = useLayout(); // Get sidebar state and toggle
+  const { toggleSidebar } = useLayout(); // For the "X" button
 
   const handleLogout = async () => {
-    try {
-      await logOut();
-    } catch (error) {
-      console.error("Failed to log out", error);
-    }
+    /* ... */
   };
-
   const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
-    localStorage.setItem("language", lng);
+    /* ... */
   };
-
-  /*if (!isSidebarOpen) {
-    return (
-      <button
-        onClick={toggleSidebar}
-        className={styles.sidebarToggleButtonCollapsed}
-      >
-        <FontAwesomeIcon icon={faBars} />
-      </button>
-    );
-  }*/
 
   return (
     <div
-      className={`${styles.sidebar} ${
-        isSidebarOpen ? styles.open : styles.closed
-      }`}
+      className={`${styles.sidebar} ${isOpen ? styles.open : styles.closed}`}
     >
+      {" "}
+      {/* Apply .open or .closed */}
       <div className={styles.sidebarHeader}>
         <div className={styles.logoSection}>
           <h2>{t("appName")}</h2>
         </div>
+        {/* "X" button to close the sidebar */}
         <button onClick={toggleSidebar} className={styles.sidebarToggleButton}>
           <FontAwesomeIcon icon={faTimes} />
         </button>
@@ -64,11 +49,8 @@ const Sidebar = () => {
       <nav className={styles.nav}>
         <ul>
           <li className={styles.active}>
-            {" "}
-            {/* Add active class logic later with routing */}
             <FontAwesomeIcon icon={faStickyNote} /> {t("notes")}
           </li>
-          {/* Add more sections/links if needed */}
         </ul>
       </nav>
       <div className={styles.settingsSection}>
