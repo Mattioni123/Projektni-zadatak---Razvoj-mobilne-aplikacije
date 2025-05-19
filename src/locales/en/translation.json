@@ -49,7 +49,7 @@
   "renameGroupTitle": "Rename Group",
   "newGroupNamePlaceholder": "New group name",
   "confirmDeleteGroupTitle": "Delete Group",
-  "confirmDeleteGroupMessage": "Are you sure you want to delete the group \"{groupName}\"? All notes within this group will also be deleted.",
+  "confirmDeleteGroupMessage": "Are you sure you want to delete the group? All notes within this group will also be deleted.",
   "errorRenamingGroup": "Error renaming group.",
   "errorDeletingGroup": "Error deleting group.",
   "cannotDeleteOnlyDefaultGroup": "Cannot delete the only default group. Create another group first or rename this one."

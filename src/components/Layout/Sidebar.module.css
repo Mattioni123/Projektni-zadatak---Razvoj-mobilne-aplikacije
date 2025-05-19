@@ -80,6 +80,13 @@
   .sidebar.closed { transform: translateX(-100%); }
   .sidebar.open { transform: translateX(0); }
 
+   /* Učini .groupActions stalno vidljivima na mobilnim uređajima */
+   .noteGroupItemWrapper .groupActions { /* Ciljamo .groupActions unutar .noteGroupItemWrapper */
+    visibility: visible !important; /* Koristimo !important da premostimo hover stil ako je potrebno */
+    opacity: 1 !important;
+    transition: none !important; /* Uklanjamo tranziciju za mobilne uređaje */
+  }
+
   /* Na mobilnom, .closed stilovi za unutarnje elemente se ne primjenjuju na isti način
      jer transformacija cijelog sidebara rješava skrivanje. */
   .sidebar.closed .sidebarHeader,
@@ -206,6 +213,8 @@
   opacity: 1;
   transition-delay: 0s;
 }
+
+
 
 .noteGroupItem {
   display: flex;

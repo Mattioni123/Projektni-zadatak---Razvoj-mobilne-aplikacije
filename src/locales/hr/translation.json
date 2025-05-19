@@ -49,7 +49,7 @@
   "renameGroupTitle": "Preimenuj Grupu",
   "newGroupNamePlaceholder": "Novi naziv grupe",
   "confirmDeleteGroupTitle": "Izbriši Grupu",
-  "confirmDeleteGroupMessage": "Jeste li sigurni da želite izbrisati grupu \"{groupName}\"? Sve bilješke unutar ove grupe također će biti izbrisane.",
+  "confirmDeleteGroupMessage": "Jeste li sigurni da želite izbrisati grupu? Sve bilješke unutar ove grupe također će biti izbrisane.",
   "errorRenamingGroup": "Greška pri preimenovanju grupe.",
   "errorDeletingGroup": "Greška pri brisanju grupe.",
   "cannotDeleteOnlyDefaultGroup": "Nije moguće izbrisati jedinu zadanu grupu. Prvo stvorite drugu grupu ili preimenujte ovu."
