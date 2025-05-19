@@ -226,51 +226,59 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               </p>
             ) : (
               <ul className={styles.noteGroupList}>
-                {noteGroups.map((group) => (
-                  <li
-                    key={group.id}
-                    className={`${styles.noteGroupItemWrapper}`}
-                  >
-                    <div
-                      className={`${styles.noteGroupItem} ${
-                        group.id === activeGroupId ? styles.activeGroup : ""
-                      }`}
-                      onClick={() => handleGroupClick(group.id)}
-                      title={group.name}
+                {noteGroups.map((group) => {
+                  // Provjera je li trenutni korisnik vlasnik grupe
+                  const isOwner =
+                    currentUser && group.creatorUid === currentUser.uid;
+
+                  return (
+                    <li
+                      key={group.id}
+                      className={`${styles.noteGroupItemWrapper}`}
                     >
-                      <FontAwesomeIcon
-                        icon={group.isDefault ? faDotCircle : faFolder}
-                        className={styles.groupIcon}
-                      />
-                      <span className={styles.groupName}>{group.name}</span>
-                    </div>
-                    {/* Ne prikazuj gumbe za defaultnu grupu ako je jedina i default */}
-                    {!(group.isDefault && noteGroups.length === 1) && (
-                      <div className={styles.groupActions}>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenRenameModal(group);
-                          }}
-                          className={styles.groupActionButton}
-                          title={t("renameGroup", "Rename group")}
-                        >
-                          <FontAwesomeIcon icon={faEdit} />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenDeleteModal(group);
-                          }}
-                          className={styles.groupActionButton}
-                          title={t("deleteGroup", "Delete group")}
-                        >
-                          <FontAwesomeIcon icon={faTrashAlt} />
-                        </button>
+                      <div
+                        className={`${styles.noteGroupItem} ${
+                          group.id === activeGroupId ? styles.activeGroup : ""
+                        }`}
+                        onClick={() => handleGroupClick(group.id)}
+                        title={group.name}
+                      >
+                        <FontAwesomeIcon
+                          icon={group.isDefault ? faDotCircle : faFolder} // Ostavite logiku za isDefault ikonu ako želite
+                          className={styles.groupIcon}
+                        />
+                        <span className={styles.groupName}>{group.name}</span>
                       </div>
-                    )}
-                  </li>
-                ))}
+                      {/* Prikazuj akcije samo ako je korisnik vlasnik */}
+                      {/* I dalje zadržavamo logiku da se ne prikazuju za jedinu default grupu ako je to željeno ponašanje */}
+                      {isOwner &&
+                        !(group.isDefault && noteGroups.length === 1) && (
+                          <div className={styles.groupActions}>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenRenameModal(group);
+                              }}
+                              className={styles.groupActionButton}
+                              title={t("renameGroup", "Rename group")}
+                            >
+                              <FontAwesomeIcon icon={faEdit} />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenDeleteModal(group);
+                              }}
+                              className={styles.groupActionButton}
+                              title={t("deleteGroup", "Delete group")}
+                            >
+                              <FontAwesomeIcon icon={faTrashAlt} />
+                            </button>
+                          </div>
+                        )}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
