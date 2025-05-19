@@ -1,14 +1,12 @@
 .notesGrid {
   display: grid;
   gap: 20px; /* Razmak između kartica */
-  padding: 20px;
+  padding: 20px; /* Ovaj padding je unutar grida, za razmak od rubova HomePage */
   /* Fiksno 4 stupca, svaki zauzima jednaku širinu (1fr) */
   grid-template-columns: repeat(4, 1fr); 
   align-items: start; 
 }
 
-/* Ako želiš da na manjim ekranima ipak bude manje stupaca, 
-   moraš dodati media queries: */
 @media (max-width: 1200px) { /* Primjer breakpointa, prilagodi po potrebi */
   .notesGrid {
     grid-template-columns: repeat(3, 1fr);

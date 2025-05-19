@@ -13,6 +13,7 @@ import NoteForm from "../components/Notes/NoteForm";
 import AddNoteButton from "../components/Notes/AddNoteButton";
 import styles from "./HomePage.module.css";
 
+
 const HomePage = () => {
   const { t } = useTranslation();
   const { currentUser } = useAuth(); // Still needed for conditional rendering or passing to components
@@ -88,9 +89,6 @@ const HomePage = () => {
   };
 
   if (!currentUser && !isLoading) {
-    // If not loading and no user, prompt to login or show public content differently
-    // For a public board, you might still show notes even if not logged in,
-    // but disable create/edit/delete. For now, we require login to see notes.
     return (
       <div className={styles.loading}>
         {t("pleaseLoginToViewNotes", "Please log in to view and create notes.")}
@@ -106,13 +104,14 @@ const HomePage = () => {
 
   return (
     <div className={styles.homePage}>
+      {" "}
       <NotesGrid
         notes={notes}
         onEditNote={handleOpenNoteForm}
         onDeleteNote={(noteId, creatorUid) =>
           handleDeleteNote(noteId, creatorUid)
-        } // Pass creatorUid
-        currentUserUid={currentUser?.uid} // Pass current user's UID
+        }
+        currentUserUid={currentUser?.uid}
       />
       <AddNoteButton onClick={() => handleOpenNoteForm()} />
       {showNoteForm && (

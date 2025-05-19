@@ -5,221 +5,243 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  width: 260px;
-  flex-shrink: 0;
-  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out, padding 0.3s ease-in-out;
-  z-index: 1200;
+  padding: 0; /* Glavni padding je uklonjen, dodaje se na unutarnje sekcije */
+  width: 260px; /* Fiksna širina otvorenog sidebara */
+  flex-shrink: 0; /* Da se ne smanjuje ako nema dovoljno prostora u flex kontejneru */
+  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out; /* Animacija za desktop i mobile */
+  z-index: 1200; /* Iznad ostalog sadržaja */
   box-sizing: border-box;
-  overflow-x: hidden; /* Prevent content from spilling during width transition */
+  overflow-x: hidden; /* Da se sadržaj ne prelijeva tijekom animacije širine */
+  /* Border s desne strane za desktop prikaz kada je otvoren */
+  border-right: 1px solid var(--border-color); 
 }
 
-.sidebar.closed {
-  width: 0;
-  padding: 20px 0;
-  overflow: hidden;
-  opacity: 0;
-  border-right: none;
-}
-.sidebar.open {
-  width: 260px; /* Or your desired width */
-  opacity: 1;
+/* ----- Mobilni prikaz ----- */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed; /* Overlay preko sadržaja */
+    top: 0;
+    left: 0;
+    border-right: none; /* Nema bordera kad je overlay */
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2); /* Sjena za overlay */
+  }
+  .sidebar.closed {
+    transform: translateX(-100%); /* Sakrij van ekrana */
+  }
+  .sidebar.open {
+    transform: translateX(0); /* Prikaži na ekranu */
+  }
+  /* Na mobilnom, kada je sidebar otvoren, logoSection (naziv app) je uvijek vidljiv */
+  .logoSection {
+    opacity: 1;
+    max-width: 100%; /* Omogući punu širinu za naziv */
+  }
 }
 
+/* ----- Desktop prikaz ----- */
+@media (min-width: 769px) {
+  .sidebar.closed {
+    width: 0;
+    overflow: hidden; /* Sakrij sav sadržaj */
+    border-right: none; /* Nema bordera kad je zatvoren */
+  }
+  .sidebar.open {
+    width: 260px;
+    border-right: 1px solid var(--border-color);
+  }
+  /* Na desktopu, kada je sidebar otvoren, logoSection (naziv app) je vidljiv */
+  .sidebar.open .logoSection {
+    opacity: 1;
+    max-width: 100%;
+  }
+  /* Na desktopu, kada je sidebar zatvoren, logoSection je skriven */
+  .sidebar.closed .logoSection {
+    opacity: 0;
+    max-width: 0;
+    overflow: hidden;
+  }
+}
 
 .sidebarHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
-  min-width: calc(260px - 40px);
+  padding: 0 10px; /* Lijevi i desni padding za header */
+  height: 60px; /* Usklađeno s .mainHeader iz App.module.css */
+  box-sizing: border-box;
+  flex-shrink: 0; /* Da se header ne smanjuje */
+  /* border-bottom: 1px solid var(--border-color); */ /* Opcionalni separator */
 }
 
-.logoSection h2 {
-  margin: 0; /* Removed bottom margin as it's handled by sidebarHeader */
-  font-size: 1.7em;
-  color: var(--primary-color);
-  white-space: nowrap;
-}
-
-.sidebarToggleButton, .sidebarToggleButtonCollapsed {
+.sidebarInternalToggle {
   background: none;
   border: none;
   color: var(--text-secondary);
-  font-size: 1.5em;
+  font-size: 1.5em; /* Veličina FontAwesome ikonice */
   cursor: pointer;
-  padding: 5px;
-  margin-left: auto;
-}
-.sidebarToggleButton:hover, .sidebarToggleButtonCollapsed:hover {
-  color: var(--primary-color);
-}
-
-.sidebarToggleButtonCollapsed {
-  position: fixed; /* Or absolute relative to a wrapper */
-  top: 15px;
-  left: 15px;
-  z-index: 1201; /* Above other content if sidebar is fully hidden */
-  background-color: var(--background-secondary);
-  border: none;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  padding: 8px;
+  margin-right: 10px; /* Razmak između gumba i naslova aplikacije */
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 1.4em;
-  cursor: pointer;
+  justify-content: center;
+  border-radius: 50%;
+  width: 40px;   /* Fiksna širina i visina za dosljednost */
+  height: 40px;
+  flex-shrink: 0; /* Da se gumb ne smanjuje */
+}
+.sidebarInternalToggle:hover {
+  color: var(--primary-color);
+  background-color: var(--primary-color-light-transparent); /* Koristi transparentnu primarnu boju */
 }
 
-.sidebarToggleButtonCollapsed:hover {
+.logoSection {
+  flex-grow: 1; /* Da gurne naslov udesno ako je potrebno ili zauzme prostor */
+  display: flex;
+  align-items: center;
+  overflow: hidden; /* Da se tekst ne prelijeva */
+  transition: opacity 0.2s ease-in-out, max-width 0.3s ease-in-out; /* Za animaciju skrivanja/prikazivanja */
+}
+.logoSection h2 {
+  margin: 0;
+  font-size: 1.5em; /* Usklađeno s .headerAppName */
+  color: var(--text-primary); /* Ili var(--primary-color) za isticanje */
+  font-weight: 500;
+  white-space: nowrap; /* Spriječava prelamanje naslova */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ako je naslov predugačak */
+}
+
+/* Stilovi za navigaciju i postavke */
+.nav, .settingsSection {
+  padding: 10px 20px 20px 20px; /* Padding za sadržaj unutar nav i settings */
+  /* Minimalna širina da se sadržaj ne bi čudno smanjivao prije nego se sidebar sakrije */
+  min-width: calc(260px - 40px); /* širina sidebara - (lijevi + desni padding) */
+  white-space: nowrap; /* Spriječava prelamanje teksta u stavkama */
+  box-sizing: border-box;
+  overflow-y: auto; /* Ako ima previše stavki, omogući skrolanje */
+}
+
+.nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav li {
+  padding: 14px 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Povećan razmak između ikonice i teksta */
+  font-weight: 500;
+  font-size: 1.05em;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav li svg { /* Ikonica */
+  flex-shrink: 0; /* Da se ikonica ne smanjuje */
+  width: 20px; /* Fiksna širina za ikonicu */
+  text-align: center;
+}
+.nav li span { /* Tekstualni dio stavke */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ako je tekst predugačak */
+}
+
+
+.nav li:hover, 
+.nav li.active {
+  background-color: var(--primary-color-light-transparent); /* Prilagođeno za transparentnu pozadinu */
+  color: var(--primary-color); /* Tekst postaje primarna boja */
+}
+
+[data-theme="dark"] .nav li:hover, 
+[data-theme="dark"] .nav li.active {
+  background-color: var(--primary-color-dark-transparent);
+  color: var(--primary-color-dark);
+}
+
+
+.settingsSection {
+  margin-top: auto; /* Gura postavke na dno */
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+  
+.settingItem, .languageSwitcher, .userInfo {
+  padding: 12px 0; /* Smanjen vertikalni padding, koristi se gap za razmak ikone */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Razmak između ikonice i teksta */
+  font-size: 0.95em;
+}
+.settingItem svg, .languageSwitcher svg, .userInfo svg {
+  flex-shrink: 0;
+  width: 20px; /* Fiksna širina za ikonicu */
+  text-align: center;
+}
+.settingItem span, .languageSwitcher span, .userInfo span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settingItem:hover {
   color: var(--primary-color);
 }
   
-  .nav ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .nav li {
-    padding: 14px 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 500;
-    font-size: 1.05em
-  }
-  
-  .nav li:hover, .nav li.active {
-    background-color: var(--primary-color-light); /* A light primary color or primary with opacity */
-    color: var(--button-text-color);
-    border-radius: 8px;
-  }
-  
-  [data-theme="dark"] .nav li:hover, [data-theme="dark"] .nav li.active {
-      background-color: var(--primary-color-dark);
-      color: var(--button-text-dark);
-  }
-  
-  
-  .settingsSection {
-    margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-color);
-  }
-
-  .nav, .settingsSection {
-    min-width: calc(260px - 40px); /* Or a suitable fixed min-width */
-    white-space: nowrap; /* Prevent items from wrapping during collapse */
+.languageSwitcher button {
+  background: none;
+  border: 1px solid var(--text-secondary);
+  color: var(--text-secondary);
+  padding: 5px 8px;
+  margin-left: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.languageSwitcher button:disabled {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.languageSwitcher button:hover:not(:disabled) {
+  background-color: var(--border-color);
+  color: var(--text-primary);
 }
   
-  .settingItem, .languageSwitcher, .userInfo {
-    padding: 12px 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.95em;
-  }
-  .settingItem:hover {
-    color: var(--primary-color);
-  }
+.userInfo {
+  margin-bottom: 10px;
+  font-size: 0.9em;
+}
   
-  .languageSwitcher button {
-    background: none;
-    border: 1px solid var(--text-secondary);
-    color: var(--text-secondary);
-    padding: 5px 8px;
-    margin-left: 5px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .languageSwitcher button:disabled {
-    color: var(--primary-color);
-    border-color: var(--primary-color);
-    cursor: not-allowed;
-  }
-  .languageSwitcher button:hover:not(:disabled) {
-    background-color: var(--border-color);
-  }
+.userInfo span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px; /* Prilagodi ako je potrebno */
+}
   
+.logoutButton {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--primary-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 1em;
+  transition: background-color 0.2s ease;
+}
   
-  .userInfo {
-    margin-bottom: 10px;
-    font-size: 0.9em;
-  }
-  
-  .userInfo span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 150px; /* Adjust as needed */
-  }
-  
-  .logoutButton {
-    width: 100%;
-    padding: 14px;
-    background-color: var(--primary-color);
-    color: var(--button-text-color);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-    font-size: 1em;
-  }
-  
-  .logoutButton:hover {
-    background-color: var(--primary-hover);
-  }
-
-  @media (max-width: 768px) { /* Mobile: Acts as an overlay */
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      border-right: none;
-      height: 100vh;
-      width: 80vw; /* Or a percentage like 80vw for wider sidebars */
-      max-width: 300vw; /* Ensure it doesn't exceed viewport */
-      transform: translateX(0); /* Should be visible when rendered */
-      background-color: var(--background-secondary); /* Ensure this is opaque */
-      border-right: none; /* Good */
-      box-shadow: 2px 0 10px rgba(0,0,0,0.2); /* Good */
-      z-index: 1200; /* Ensure it's on top */
-    }
-    .sidebar.closed { /* When isOpen is false on mobile */
-      transform: translateX(-100%);
-    }
-    .sidebar.open { /* When isOpen is true on mobile */
-      transform: translateX(0);
-    }
-  }
-
-  @media (min-width: 769px) { /* Desktop: Static, part of layout, collapses in width */
-    .sidebar {
-      position: relative;
-      transform: translateX(0); /* No horizontal transform on desktop */
-      border-right: 1px solid var(--border-color);
-    }
-    .sidebar.closed { /* When isOpen is false on desktop */
-      width: 0;
-      padding-left: 0;
-      padding-right: 0;
-      /* border-right: none; /* Optionally hide border when collapsed */
-    }
-    .sidebar.open { /* When isOpen is true on desktop */
-      width: 260px;
-      padding: 20px; /* Ensure padding is restored */
-      /* border-right: 1px solid var(--border-color); /* Ensure border is restored */
-    }
-  }
+.logoutButton:hover {
+  background-color: var(--primary-hover);
+}

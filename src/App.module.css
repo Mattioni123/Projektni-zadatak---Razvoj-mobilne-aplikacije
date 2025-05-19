@@ -1,33 +1,99 @@
 /* src/App.module.css */
 .appContainer {
-    display: flex;
-    min-height: 100vh;
-  }
-  
-  .mainContent {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    transition: margin-left 0.3s ease-in-out; /* Example if sidebar pushes content */
-  }
-  
-  .mainContentSidebarOpen {
-    /* Styles when sidebar is open, e.g., if sidebar is position:fixed and main content needs margin */
-    /* margin-left: 260px; */ /* If sidebar is fixed and has this width */
-  }
-  .mainContentSidebarClosed {
-    /* Styles when sidebar is closed */
-    /* margin-left: 0; */
-  }
+  display: flex;
+  min-height: 100vh;
+}
 
-  .backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Slightly darker backdrop can help */
-    z-index: 1150; /* Below sidebar, above main content */
-    cursor: pointer; /* Indicate it can be clicked to close */
-  }
+.mainContent {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  transition: margin-left 0.3s ease-in-out;
+  position: relative;
+}
+
+/* Smanjujemo margin-left da bude manji razmak, ili ga čak možemo ukloniti
+   ako želimo da se sidebar preklapa na desktopu kao i na mobilnom.
+   Za sada, ostavimo manji margin. Prilagodi po želji.
+   Ako želiš da se sidebar uvijek preklapa (nema pomaka sadržaja):
+   Ukloni .mainContentShifted klasu i njezinu primjenu u App.jsx.
+   Sidebar komponenta će onda trebati position:fixed (ili absolute unutar .appContainer)
+   i viši z-index.
+*/
+.mainContentShifted {
+  /* Smanji ovaj margin da bude manji "gap" ili ga postavi na 0 ako želiš da sidebar preklapa */
+  margin-left: 60px; /* Npr. širina ikonice + malo paddinga, ili 0 */
+  /* Ako je 0, onda .mainHeader i .pageContent ne trebaju posebne margine/paddinge
+     vezane uz otvoren sidebar na desktopu. */
+}
+
+.mainHeader {
+  display: flex;
+  align-items: center;
+  padding: 0 20px; /* Smanjen padding, gumb će imati svoj padding */
+  height: 60px; 
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  background-color: var(--background-primary);
+  z-index: 100; 
+  /* Možda border-bottom ako želiš vizualno odvajanje */
+  /* border-bottom: 1px solid var(--border-color); */
+}
+
+.headerSidebarToggle { /* Gumb u .mainHeader-u, vidljiv kad je sidebar zatvoren */
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5em;
+  cursor: pointer;
+  padding: 8px;
+  margin-right: 15px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 40px; /* Održavaj konzistentnu veličinu s gumbom u sidebaru */
+  height: 40px;
+}
+.headerSidebarToggle:hover {
+  color: var(--primary-color);
+  background-color: var(--primary-color-light-transparent);
+}
+
+.headerAppName {
+  font-size: 1.5em;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: margin-left 0.3s ease-in-out; /* Za animaciju ako se pomiče */
+}
+
+.pageContent {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1150; /* Ispod sidebara (koji je 1200), iznad ostatka */
+  cursor: pointer;
+}
+
+.appLoading { /* Dodaj stil za loading poruku ako želiš */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.5em;
+  color: var(--text-secondary);
+}
+
+/* Ukloni .mainContentSidebarOpen i .mainContentSidebarClosed ako se više ne koriste na taj način */

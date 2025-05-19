@@ -9,20 +9,21 @@ import {
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LayoutProvider, useLayout } from "./contexts/LayoutContext";
-import Sidebar from "./components/Layout/Sidebar"; // Sidebar component
+import Sidebar from "./components/Layout/Sidebar";
 import LoginPage from "./components/Auth/LoginPage";
 import HomePage from "./pages/HomePage";
 import "./styles/global.css";
 import appStyles from "./App.module.css";
-import sidebarStyles from "./components/Layout/Sidebar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars } from "@fortawesome/free-solid-svg-icons"; // Samo faBars
+import { useTranslation } from "react-i18next";
 
 const MOBILE_BREAKPOINT = 768;
 
 function AppContent() {
   const { currentUser, loading } = useAuth();
-  const { isSidebarOpen, toggleSidebar } = useLayout(); // isSidebarOpen controls the state
+  const { isSidebarOpen, toggleSidebar } = useLayout();
+  const { t } = useTranslation();
   const [isMobile, setIsMobile] = useState(
     window.innerWidth < MOBILE_BREAKPOINT
   );
@@ -32,7 +33,7 @@ function AppContent() {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initial check
+    handleResize();
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -42,25 +43,15 @@ function AppContent() {
 
   return (
     <div className={appStyles.appContainer}>
-      {/* Sidebar Component: Always rendered if user is logged in.
-          Its visual open/closed state is controlled by the 'isOpen' prop. */}
-      {currentUser && <Sidebar isOpen={isSidebarOpen} />}{" "}
-      {/* Pass isOpen prop */}
-      {/* Hamburger Button: Shown if user is logged in AND sidebar is currently visually closed. */}
-      {currentUser && !isSidebarOpen && (
-        <button
-          onClick={toggleSidebar}
-          className={sidebarStyles.sidebarToggleButtonCollapsed}
-          aria-label="Open sidebar"
-        >
-          <FontAwesomeIcon icon={faBars} />
-        </button>
+      {/* Sidebar sada prima toggleSidebar funkciju da bi je koristio interni gumb */}
+      {currentUser && (
+        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       )}
-      {/* Backdrop for mobile overlay sidebar: Shown if on mobile, sidebar is visually open, and user is logged in. */}
+
       {isMobile && isSidebarOpen && currentUser && (
         <div className={appStyles.backdrop} onClick={toggleSidebar}></div>
       )}
-      {/* Main Content Area: Shifts if sidebar is visually open AND not on mobile AND user is logged in. */}
+
       <main
         className={`${appStyles.mainContent} ${
           isSidebarOpen && !isMobile && currentUser
@@ -68,24 +59,53 @@ function AppContent() {
             : ""
         }`}
       >
-        <Routes>
-          <Route
-            path="/"
-            element={
-              currentUser ? <HomePage /> : <Navigate to="/login" replace />
-            }
-          />
-          <Route
-            path="/login"
-            element={!currentUser ? <LoginPage /> : <Navigate to="/" replace />}
-          />
-        </Routes>
+        {currentUser && (
+          <div className={appStyles.mainHeader}>
+            {/* Ovaj gumb je vidljiv SAMO KADA JE SIDEBAR ZATVOREN */}
+            {!isSidebarOpen && (
+              <button
+                onClick={toggleSidebar}
+                className={appStyles.headerSidebarToggle}
+                aria-label="Open sidebar"
+              >
+                <FontAwesomeIcon icon={faBars} />
+              </button>
+            )}
+            {/* Naziv aplikacije - prikazuje se samo ako sidebar nije otvoren, 
+                ili ako je desktop prikaz (da ne smeta na mobitelu kad je sidebar overlay) */}
+            {(!isSidebarOpen || !isMobile) && (
+              <h1
+                className={`${appStyles.headerAppName} ${
+                  !isSidebarOpen ? appStyles.headerAppNameSidebarClosed : ""
+                }`}
+              >
+                {t("appName")}
+              </h1>
+            )}
+          </div>
+        )}
+        <div className={appStyles.pageContent}>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                currentUser ? <HomePage /> : <Navigate to="/login" replace />
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                !currentUser ? <LoginPage /> : <Navigate to="/" replace />
+              }
+            />
+          </Routes>
+        </div>
       </main>
     </div>
   );
 }
 
-
+// App funkcija ostaje ista
 function App() {
   return (
     <Router>
