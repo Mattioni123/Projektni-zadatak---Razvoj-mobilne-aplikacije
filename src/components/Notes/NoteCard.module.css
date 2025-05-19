@@ -1,30 +1,28 @@
 /* src/components/Notes/NoteCard.module.css */
 .noteCardWrapper {
+  position: relative; /* Omogućava apsolutno pozicioniranje .commentsSection unutar */
   display: flex;
   flex-direction: column;
-  break-inside: avoid-column;
-  margin-bottom: 20px; /* << INCREASED MARGIN for spacing between cards/wrappers */
-  /* The wrapper itself should NOT have a border or shadow if the .noteCard inside does */
 }
 
 .noteCard {
   background-color: var(--note-bg);
-  border: 1px solid var(--border-color); /* << ENSURE BORDER IS VISIBLE */
-  border-radius: 10px; /* << INCREASED BORDER RADIUS */
-  padding: 18px;       /* << INCREASED PADDING */
-  box-shadow: var(--note-shadow); /* Ensure shadow is applied and visible */
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: var(--note-shadow);
   display: flex;
   flex-direction: column;
-  min-height: 120px; /* Keep a minimum height */
-  position: relative; /* For comment count badge */
+  min-height: 120px; 
+  position: relative;
   transition: box-shadow 0.2s ease;
-  /* No margin-bottom here, as wrapper handles it */
+  z-index: 2;
 }
 .noteCard:hover { /* Subtle hover effect on the card itself */
-  box-shadow: 0 3px 6px rgba(60,64,67,0.302), 0 5px 12px 4px rgba(60,64,67,0.149);
+  box-shadow: 0 3px 6px rgba(60,64,67,0.302), 0 5px 12px 4px #7a48e0;
 }
 [data-theme="dark"] .noteCard:hover {
-  box-shadow: 0 3px 6px rgba(0,0,0,0.302), 0 5px 12px 4px rgba(0,0,0,0.149);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.302), 0 5px 12px 4px #9f7cf0;
 }
 
 
@@ -149,28 +147,37 @@
 
 /* Comments Section Styling */
 .commentsSection {
-  background-color: var(--note-bg); /* Match note background or slightly different */
-  /* border-top: 1px solid var(--border-color); Remove if card has bottom border */
-  border-left: 1px solid var(--border-color); /* To connect with card border */
-  border-right: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
-  margin-top: -1px; /* Overlap with card's bottom border for seamless look */
-  border-bottom-left-radius: 10px; /* Match card's radius */
+  position: absolute;
+  top: 100%; /* Postavlja se odmah ispod .noteCard */
+  left: 0;
+  right: 0; /* Ili width: 100%; */
+  background-color: var(--note-bg); /* Može biti malo drugačija nijansa od kartice za kontrast */
+  border: 1px solid var(--border-color);
+  border-top: none; /* Da se ne dupla s donjim borderom kartice ako je commentsSection stiliziran kao nastavak */
+  border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  overflow: hidden;
-  max-height: 0;
+  box-shadow: var(--note-shadow); /* Dodajemo sjenu da se istakne */
+  
   opacity: 0;
-  transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out 0.1s, padding 0.3s ease-in-out;
-  padding: 0 18px; /* Match card's horizontal padding when closed */
-  /* box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); Removed, rely on borders */
+  max-height: 0; /* Koristimo za animaciju visine */
+  transform: translateY(-10px) scaleY(0.95); /* Početna pozicija za animaciju (malo gore i skupljeno) */
+  transform-origin: top center;
+  transition: opacity 0.3s ease, max-height 0.4s ease-in-out, transform 0.3s ease;
+  overflow: hidden; /* Važno za max-height animaciju */
+  padding: 0 18px;
+  z-index: 1; /* Ispod .noteCard (koji ima z-index: 2) kada je zatvoren */
+  /* Osigurava da zauzima istu širinu kao kartica */
+  box-sizing: border-box; 
 }
 
 .commentsSection.open {
-  max-height: 450px; /* Increased max height */
   opacity: 1;
-  padding: 18px; /* Match card's horizontal padding when open */
-  padding-top: 15px; /* Specific top padding for content */
-  overflow-y: auto;
+  max-height: 450px; /* Prilagodi maksimalnu visinu po potrebi */
+  transform: translateY(0) scaleY(1);
+  padding: 18px;
+  padding-top: 15px;
+  overflow-y: auto; /* Skrolanje unutar komentara */
+  z-index: 3; /* Iznad ostalih kartica kada je otvoren */
 }
 .commentsSection.open::-webkit-scrollbar { width: 6px; }
 .commentsSection.open::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }

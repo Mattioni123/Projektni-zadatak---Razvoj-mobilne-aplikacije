@@ -1,50 +1,36 @@
-/* src/components/Notes/NotesGrid.module.css */
 .notesGrid {
-    padding: 20px;
-    column-gap: 20px;
-    /* Adjust column count based on screen size for responsiveness */
-  }
-  
-  @media (max-width: 480px) { .notesGrid { column-count: 1; padding: 15px; column-gap: 0; } }
-  @media (min-width: 481px) and (max-width: 768px) { .notesGrid { column-count: 2; column-gap: 15px; } }
+  display: grid;
+  gap: 20px; /* Razmak između kartica */
+  padding: 20px;
+  /* Fiksno 4 stupca, svaki zauzima jednaku širinu (1fr) */
+  grid-template-columns: repeat(4, 1fr); 
+  align-items: start; 
+}
 
-  /* Small screens (mobile) */
-  @media (max-width: 600px) {
-    .notesGrid {
-      column-count: 1;
-    }
+/* Ako želiš da na manjim ekranima ipak bude manje stupaca, 
+   moraš dodati media queries: */
+@media (max-width: 1200px) { /* Primjer breakpointa, prilagodi po potrebi */
+  .notesGrid {
+    grid-template-columns: repeat(3, 1fr);
   }
-  
-  /* Medium screens (tablets) */
-  @media (min-width: 601px) and (max-width: 900px) {
-    .notesGrid {
-      column-count: 2;
-    }
+}
+
+@media (max-width: 900px) { /* Primjer breakpointa */
+  .notesGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  /* Large screens (desktops) */
-  @media (min-width: 901px) and (max-width: 1200px) {
-    .notesGrid {
-      column-count: 3;
-    }
+}
+
+@media (max-width: 600px) { /* Primjer breakpointa */
+  .notesGrid {
+    grid-template-columns: 1fr; /* Jedan stupac */
   }
-  
-  /* Extra large screens */
-  @media (min-width: 1201px) {
-    .notesGrid {
-      column-count: 4; /* Or more, depending on desired density */
-    }
-  }
-  
-  /* Ensure cards don't break across columns unnaturally */
-  .notesGrid > .noteCardWrapper { /* Targets NoteCard directly */
-    break-inside: avoid-column;
-    margin-bottom: 15px; /* Spacing between cards in the same column flow */
-  }
-  
-  .noNotesMessage {
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 1.2em;
-    padding: 50px;
-  }
+}
+
+.noNotesMessage {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.2em;
+  padding: 50px;
+  grid-column: 1 / -1; /* Poruka zauzima sve stupce */
+}

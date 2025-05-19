@@ -6,8 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons"; // Make sure to install @fortawesome/free-brands-svg-icons
 import styles from "./LoginPage.module.css";
 
-// Run: npm install @fortawesome/free-brands-svg-icons
-
 const LoginPage = () => {
   const { t } = useTranslation();
 
