@@ -5,200 +5,342 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 0; /* Glavni padding je uklonjen, dodaje se na unutarnje sekcije */
-  width: 260px; /* Fiksna širina otvorenog sidebara */
-  flex-shrink: 0; /* Da se ne smanjuje ako nema dovoljno prostora u flex kontejneru */
-  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out; /* Animacija za desktop i mobile */
-  z-index: 1200; /* Iznad ostalog sadržaja */
+  padding: 0;
+  width: 260px;
+  flex-shrink: 0;
+  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+  z-index: 1200;
   box-sizing: border-box;
-  overflow-x: hidden; /* Da se sadržaj ne prelijeva tijekom animacije širine */
-  /* Border s desne strane za desktop prikaz kada je otvoren */
-  border-right: 1px solid var(--border-color); 
+  border-right: 1px solid var(--border-color);
+  /* Inicijalno, unutarnji overflow je vidljiv da bi sekcije mogle skrolati */
+  overflow-x: hidden;
+  overflow-y: hidden; /* Glavni sidebar ne skrola, sekcije da */
 }
+
+/* Kada je sidebar OTVOREN, osiguraj da su unutarnje sekcije vidljive */
+.sidebar.open .sidebarHeader,
+.sidebar.open .newGroupButton,
+.sidebar.open .noteGroupsSection,
+.sidebar.open .settingsSection {
+  opacity: 1;
+  /* Tranzicija za pojavljivanje može imati blago kašnjenje */
+  transition: opacity 0.2s ease-in-out 0.1s, max-width 0.3s ease-in-out, padding 0.3s ease-in-out, border 0.3s ease-in-out;
+}
+.sidebar.open .settingsSection {
+  padding: 15px 20px; /* Vrati paddinge */
+  border-top: 1px solid var(--border-color);
+}
+.sidebar.open .noteGroupsSection {
+    padding: 0; /* Lista grupa ima svoj padding */
+    border-bottom: 1px solid var(--border-color);
+}
+
+
+/* Kada je sidebar ZATVOREN (uglavnom za desktop) */
+.sidebar.closed {
+  width: 0;
+  border-right: none;
+  overflow: hidden; /* Ovo je najvažnije za skrivanje sadržaja dok se širina animira */
+}
+
+.sidebar.closed .sidebarHeader,
+.sidebar.closed .newGroupButton,
+.sidebar.closed .noteGroupsSection,
+.sidebar.closed .settingsSection {
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  border: none; /* Ukloni sve bordere unutarnjih sekcija */
+  overflow: hidden; /* Sakrij sadržaj sekcija */
+  max-height: 0; /* Pomaže pri "skupljanju" */
+  /* Brža tranzicija za nestajanje ili bez odgode */
+  transition: opacity 0.15s ease-out, max-height 0.2s ease-out, padding 0.2s ease-out, margin 0.2s ease-out, border 0.2s ease-out;
+}
+/* Specifično za elemente unutar settingsSection da se ne vidi tekst dok se skuplja */
+.sidebar.closed .settingsSection > div {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    margin:0; padding:0; /* Resetiraj sve razmake */
+}
+
 
 /* ----- Mobilni prikaz ----- */
 @media (max-width: 768px) {
   .sidebar {
-    position: fixed; /* Overlay preko sadržaja */
+    position: fixed;
     top: 0;
     left: 0;
-    border-right: none; /* Nema bordera kad je overlay */
-    box-shadow: 2px 0 10px rgba(0,0,0,0.2); /* Sjena za overlay */
+    border-right: none;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    overflow-y: auto; /* Omogući skrolanje na mobilnom za cijeli sidebar ako treba */
   }
-  .sidebar.closed {
-    transform: translateX(-100%); /* Sakrij van ekrana */
-  }
-  .sidebar.open {
-    transform: translateX(0); /* Prikaži na ekranu */
-  }
-  /* Na mobilnom, kada je sidebar otvoren, logoSection (naziv app) je uvijek vidljiv */
-  .logoSection {
-    opacity: 1;
-    max-width: 100%; /* Omogući punu širinu za naziv */
+  .sidebar.closed { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+
+  /* Na mobilnom, .closed stilovi za unutarnje elemente se ne primjenjuju na isti način
+     jer transformacija cijelog sidebara rješava skrivanje. */
+  .sidebar.closed .sidebarHeader,
+  .sidebar.closed .newGroupButton,
+  .sidebar.closed .noteGroupsSection,
+  .sidebar.closed .settingsSection {
+    opacity: 1; /* Ovdje trebaju ostati vidljivi unutar sidebara koji se miče */
+    max-height: none; /* Ukloni max-height ograničenje */
+    /* Tranzicije za opacity/max-height nisu relevantne za mobilno zatvaranje */
+    transition: none;
   }
 }
 
 /* ----- Desktop prikaz ----- */
 @media (min-width: 769px) {
-  .sidebar.closed {
-    width: 0;
-    overflow: hidden; /* Sakrij sav sadržaj */
-    border-right: none; /* Nema bordera kad je zatvoren */
-  }
-  .sidebar.open {
-    width: 260px;
-    border-right: 1px solid var(--border-color);
-  }
-  /* Na desktopu, kada je sidebar otvoren, logoSection (naziv app) je vidljiv */
-  .sidebar.open .logoSection {
-    opacity: 1;
-    max-width: 100%;
-  }
-  /* Na desktopu, kada je sidebar zatvoren, logoSection je skriven */
-  .sidebar.closed .logoSection {
-    opacity: 0;
-    max-width: 0;
-    overflow: hidden;
-  }
+  /* Već definirano gore za .sidebar.closed i .sidebar.open */
 }
 
 .sidebarHeader {
   display: flex;
   align-items: center;
-  padding: 0 10px; /* Lijevi i desni padding za header */
-  height: 60px; /* Usklađeno s .mainHeader iz App.module.css */
+  padding: 0 10px;
+  height: 60px;
   box-sizing: border-box;
-  flex-shrink: 0; /* Da se header ne smanjuje */
-  /* border-bottom: 1px solid var(--border-color); */ /* Opcionalni separator */
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border-color);
+  /* Osiguraj da se header ne skuplja na 0px visine */
+  min-height: 60px; 
 }
 
 .sidebarInternalToggle {
   background: none;
   border: none;
   color: var(--text-secondary);
-  font-size: 1.5em; /* Veličina FontAwesome ikonice */
+  font-size: 1.5em;
   cursor: pointer;
   padding: 8px;
-  margin-right: 10px; /* Razmak između gumba i naslova aplikacije */
+  margin-right: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  width: 40px;   /* Fiksna širina i visina za dosljednost */
+  width: 40px;
   height: 40px;
-  flex-shrink: 0; /* Da se gumb ne smanjuje */
+  flex-shrink: 0;
 }
 .sidebarInternalToggle:hover {
   color: var(--primary-color);
-  background-color: var(--primary-color-light-transparent); /* Koristi transparentnu primarnu boju */
+  background-color: var(--primary-color-light-transparent);
 }
 
-.logoSection {
-  flex-grow: 1; /* Da gurne naslov udesno ako je potrebno ili zauzme prostor */
-  display: flex;
-  align-items: center;
-  overflow: hidden; /* Da se tekst ne prelijeva */
-  transition: opacity 0.2s ease-in-out, max-width 0.3s ease-in-out; /* Za animaciju skrivanja/prikazivanja */
-}
-.logoSection h2 {
-  margin: 0;
-  font-size: 1.5em; /* Usklađeno s .headerAppName */
-  color: var(--text-primary); /* Ili var(--primary-color) za isticanje */
-  font-weight: 500;
-  white-space: nowrap; /* Spriječava prelamanje naslova */
-  overflow: hidden;
-  text-overflow: ellipsis; /* Ako je naslov predugačak */
-}
-
-/* Stilovi za navigaciju i postavke */
-.nav, .settingsSection {
-  padding: 10px 20px 20px 20px; /* Padding za sadržaj unutar nav i settings */
-  /* Minimalna širina da se sadržaj ne bi čudno smanjivao prije nego se sidebar sakrije */
-  min-width: calc(260px - 40px); /* širina sidebara - (lijevi + desni padding) */
-  white-space: nowrap; /* Spriječava prelamanje teksta u stavkama */
-  box-sizing: border-box;
-  overflow-y: auto; /* Ako ima previše stavki, omogući skrolanje */
-}
-
-.nav ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.nav li {
-  padding: 14px 15px;
-  margin-bottom: 10px;
-  border-radius: 8px;
+.newGroupButton {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 1.0em;
   cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
-  gap: 12px; /* Povećan razmak između ikonice i teksta */
-  font-weight: 500;
-  font-size: 1.05em;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.nav li svg { /* Ikonica */
-  flex-shrink: 0; /* Da se ikonica ne smanjuje */
-  width: 20px; /* Fiksna širina za ikonicu */
-  text-align: center;
-}
-.nav li span { /* Tekstualni dio stavke */
+  flex-grow: 1;
+  margin-left: 5px;
+  /* transition ostaje isti */
   overflow: hidden;
-  text-overflow: ellipsis; /* Ako je tekst predugačak */
+  height: 38px;
+  max-width: 100%;
+  white-space: nowrap; /* Važno da se tekst ne prelama */
+}
+.newGroupButton:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  background-color: var(--primary-color-light-transparent);
+}
+.newGroupButton svg {
+  margin-right: 8px;
+  font-size: 1.1em;
+}
+.newGroupButtonText {
+  font-size: 0.9em;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-
-.nav li:hover, 
-.nav li.active {
-  background-color: var(--primary-color-light-transparent); /* Prilagođeno za transparentnu pozadinu */
-  color: var(--primary-color); /* Tekst postaje primarna boja */
+.noteGroupsSection {
+  padding: 0;
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-bottom: 1px solid var(--border-color);
+  max-width: 100%;
+  /* transition ostaje isti */
+}
+.noteGroupsSection .placeholderText {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 0.9em;
+  text-align: center;
+  padding: 20px;
+  white-space: normal; /* Omogući prelamanje za placeholder */
 }
 
-[data-theme="dark"] .nav li:hover, 
-[data-theme="dark"] .nav li.active {
+.noteGroupList {
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+}
+
+.noteGroupItemWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px 0 20px;
+  transition: background-color 0.1s ease;
+  white-space: nowrap;
+}
+.noteGroupItemWrapper:hover {
+  background-color: var(--background-primary);
+}
+.noteGroupItemWrapper:hover .groupActions {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.noteGroupItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  cursor: pointer;
+  gap: 12px;
+  font-size: 0.9em;
+  flex-grow: 1;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.noteGroupItem.activeGroup {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+[data-theme="dark"] .noteGroupItem.activeGroup {
+  color: var(--primary-color-dark);
+}
+.noteGroupItemWrapper:hover .noteGroupItem.activeGroup {
+    color: var(--primary-color);
+}
+[data-theme="dark"] .noteGroupItemWrapper:hover .noteGroupItem.activeGroup {
+    color: var(--primary-color-dark);
+}
+.noteGroupItemWrapper:hover .noteGroupItem:not(.activeGroup) {
+    color: var(--text-primary);
+}
+
+.groupIcon {
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+.noteGroupItem.activeGroup .groupIcon {
+  color: var(--primary-color);
+}
+[data-theme="dark"] .noteGroupItem.activeGroup .groupIcon {
+  color: var(--primary-color-dark);
+}
+.noteGroupItemWrapper:hover .groupIcon {
+    color: var(--text-primary);
+}
+.noteGroupItemWrapper:hover .noteGroupItem.activeGroup .groupIcon {
+    color: var(--primary-color);
+}
+[data-theme="dark"] .noteGroupItemWrapper:hover .noteGroupItem.activeGroup .groupIcon {
+    color: var(--primary-color-dark);
+}
+
+.groupName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}
+
+.groupActions {
+  display: flex;
+  align-items: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 0.2s, opacity 0.2s ease-in-out;
+  flex-shrink: 0;
+}
+
+.groupActionButton {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.85em;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+}
+.groupActionButton:hover {
+  color: var(--primary-color);
+  background-color: var(--primary-color-light-transparent);
+}
+[data-theme="dark"] .groupActionButton:hover {
   background-color: var(--primary-color-dark-transparent);
   color: var(--primary-color-dark);
 }
 
-
 .settingsSection {
-  margin-top: auto; /* Gura postavke na dno */
-  padding-top: 20px;
+  padding: 15px 20px;
+  white-space: nowrap;
+  box-sizing: border-box;
   border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+  /* transition ostaje isti */
+  max-width: 100%;
+  overflow: hidden; /* Važno za skrivanje sadržaja dok se animira opacity */
 }
-  
+
 .settingItem, .languageSwitcher, .userInfo {
-  padding: 12px 0; /* Smanjen vertikalni padding, koristi se gap za razmak ikone */
+  padding: 10px 0;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 12px; /* Razmak između ikonice i teksta */
-  font-size: 0.95em;
+  gap: 12px;
+  font-size: 0.9em;
+  white-space: nowrap;
 }
 .settingItem svg, .languageSwitcher svg, .userInfo svg {
   flex-shrink: 0;
-  width: 20px; /* Fiksna širina za ikonicu */
+  width: 18px;
+  height: 18px;
   text-align: center;
 }
 .settingItem span, .languageSwitcher span, .userInfo span {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.settingItem:hover { color: var(--primary-color); }
 
-.settingItem:hover {
-  color: var(--primary-color);
-}
-  
 .languageSwitcher button {
   background: none;
   border: 1px solid var(--text-secondary);
   color: var(--text-secondary);
-  padding: 5px 8px;
+  padding: 4px 7px;
   margin-left: 5px;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 0.9em;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 .languageSwitcher button:disabled {
@@ -211,22 +353,22 @@
   background-color: var(--border-color);
   color: var(--text-primary);
 }
-  
+
 .userInfo {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-size: 0.9em;
+  white-space: nowrap;
 }
-  
 .userInfo span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 180px; /* Prilagodi ako je potrebno */
+  max-width: 170px;
 }
-  
+
 .logoutButton {
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   background-color: var(--primary-color);
   color: var(--button-text-color);
   border: none;
@@ -236,12 +378,129 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-  font-size: 1em;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 0.95em;
+  white-space: nowrap;
   transition: background-color 0.2s ease;
 }
-  
-.logoutButton:hover {
+.logoutButton:hover { background-color: var(--primary-hover); }
+
+/* Modal styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1500;
+}
+
+.modalContent {
+  background-color: var(--background-secondary);
+  padding: 25px 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+  width: 90%;
+  max-width: 450px;
+  position: relative;
+}
+
+.modalContent h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  font-size: 1.4em;
+}
+.modalContent p {
+  margin-bottom: 25px;
+  color: var(--text-secondary);
+  font-size: 0.95em;
+  line-height: 1.5;
+}
+
+.modalCloseButtonTop {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.4em;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+}
+.modalCloseButtonTop:hover {
+  color: var(--text-primary);
+}
+
+.modalInput {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1em;
+}
+
+.modalButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.modalSaveButton,
+.modalCancelButton {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modalSaveButton {
+  background-color: var(--primary-color);
+  color: var(--button-text-color);
+}
+.modalSaveButton:hover:not(:disabled) {
   background-color: var(--primary-hover);
+}
+.modalSaveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modalCancelButton {
+  background-color: var(--border-color);
+  color: var(--text-secondary);
+}
+[data-theme="dark"] .modalCancelButton {
+    color: var(--text-primary);
+}
+.modalCancelButton:hover {
+  background-color: var(--text-secondary);
+  color: var(--background-primary);
+}
+[data-theme="dark"] .modalCancelButton:hover {
+  background-color: var(--border-color-dark);
+  filter: brightness(1.2);
+}
+
+.deleteConfirmButton {
+  background-color: #e53935;
+  color: white;
+}
+.deleteConfirmButton:hover {
+  background-color: #c62828;
 }

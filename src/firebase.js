@@ -1,3 +1,4 @@
+// src/firebase.js
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
@@ -10,13 +11,15 @@ import {
   collection,
   addDoc,
   query,
-  // where, // We might not need 'where' for user-specific notes if all are public
+  where,
   onSnapshot,
   doc,
   updateDoc,
   deleteDoc,
   serverTimestamp,
-  orderBy, // For ordering public notes
+  orderBy,
+  writeBatch, // Za transakcijsko brisanje bilješki
+  getDocs, // Za dohvaćanje svih bilješki grupe prije brisanja
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -36,34 +39,107 @@ const googleProvider = new GoogleAuthProvider();
 const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
 const logOut = () => signOut(auth);
 
-// Global notes collection
 const notesCollectionRef = collection(db, "notes");
+const noteGroupsCollectionRef = collection(db, "noteGroups");
 
-const createNoteInFirestore = (noteData) => {
+const createNoteGroupInFirestore = (groupData) => {
   if (!auth.currentUser) return Promise.reject("User not authenticated");
+  return addDoc(noteGroupsCollectionRef, {
+    ...groupData,
+    creatorUid: auth.currentUser.uid,
+    createdAt: serverTimestamp(),
+  });
+};
+
+const getNoteGroupsFromFirestore = (userId, callback) => {
+  const q = query(
+    noteGroupsCollectionRef,
+    where("creatorUid", "==", userId),
+    orderBy("createdAt", "asc")
+  );
+  return onSnapshot(q, (querySnapshot) => {
+    const groups = [];
+    querySnapshot.forEach((doc) => {
+      groups.push({ id: doc.id, ...doc.data() });
+    });
+    callback(groups);
+  });
+};
+
+const updateNoteGroupNameInFirestore = (groupId, newName) => {
+  if (!auth.currentUser) return Promise.reject("User not authenticated");
+  const groupRef = doc(db, "noteGroups", groupId);
+  // Dodatna provjera: Osiguraj da korisnik mijenja samo svoju grupu (ovo bi trebalo biti i u Firestore pravilima)
+  return updateDoc(groupRef, {
+    name: newName,
+  });
+};
+
+const deleteNoteGroupFromFirestore = async (groupId) => {
+  if (!auth.currentUser) return Promise.reject("User not authenticated");
+
+  // Prvo, obriši sve bilješke koje pripadaju toj grupi
+  const notesQuery = query(
+    notesCollectionRef,
+    where("groupId", "==", groupId),
+    where("creatorUid", "==", auth.currentUser.uid)
+  );
+  const notesSnapshot = await getDocs(notesQuery);
+
+  const batch = writeBatch(db);
+  notesSnapshot.forEach((noteDoc) => {
+    batch.delete(noteDoc.ref);
+    // Ovdje bi trebalo rekurzivno brisati i komentare za svaku bilješku ako postoje
+    // Za jednostavnost, preskačemo brisanje komentara, ali u produkciji je važno
+  });
+  await batch.commit();
+
+  // Zatim, obriši samu grupu
+  const groupRef = doc(db, "noteGroups", groupId);
+  return deleteDoc(groupRef);
+};
+
+const createNoteInFirestore = (noteData, groupId) => {
+  if (!auth.currentUser || !groupId)
+    return Promise.reject("User not authenticated or groupId missing");
   return addDoc(notesCollectionRef, {
     ...noteData,
     creatorUid: auth.currentUser.uid,
-    creatorDisplayName: auth.currentUser.displayName || auth.currentUser.email, // Fallback to email if displayName is not set
+    creatorDisplayName: auth.currentUser.displayName || auth.currentUser.email,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
+    groupId: groupId,
   });
 };
 
-// Gets ALL public notes
-const getPublicNotesFromFirestore = (callback) => {
-  const q = query(notesCollectionRef, orderBy("createdAt", "desc")); // Order by creation time
-  return onSnapshot(q, (querySnapshot) => {
-    const notes = [];
-    querySnapshot.forEach((doc) => {
-      notes.push({ id: doc.id, ...doc.data() });
-    });
-    callback(notes);
-  });
+const getNotesForGroupFromFirestore = (groupId, callback) => {
+  if (!auth.currentUser || !groupId) {
+    callback([]);
+    return () => {};
+  }
+  const q = query(
+    notesCollectionRef,
+    where("creatorUid", "==", auth.currentUser.uid),
+    where("groupId", "==", groupId),
+    orderBy("createdAt", "desc")
+  );
+  return onSnapshot(
+    q,
+    (querySnapshot) => {
+      const notes = [];
+      querySnapshot.forEach((doc) => {
+        notes.push({ id: doc.id, ...doc.data() });
+      });
+      callback(notes);
+    },
+    (error) => {
+      console.error("Error fetching notes for group:", error);
+      callback([]);
+    }
+  );
 };
 
 const updateNoteInFirestore = (noteId, updatedData) => {
-  // Security for update should be handled by Firestore rules (only creator can update)
   const noteRef = doc(db, "notes", noteId);
   return updateDoc(noteRef, {
     ...updatedData,
@@ -72,12 +148,10 @@ const updateNoteInFirestore = (noteId, updatedData) => {
 };
 
 const deleteNoteFromFirestore = (noteId) => {
-  // Security for delete should be handled by Firestore rules (only creator can delete)
   const noteRef = doc(db, "notes", noteId);
   return deleteDoc(noteRef);
 };
 
-// --- Functions for Comments (Phase 3) ---
 const commentsCollectionRef = (noteId) =>
   collection(db, `notes/${noteId}/comments`);
 
@@ -107,10 +181,15 @@ export {
   db,
   signInWithGoogle,
   logOut,
+  createNoteGroupInFirestore,
+  getNoteGroupsFromFirestore,
+  updateNoteGroupNameInFirestore, // Novo
+  deleteNoteGroupFromFirestore, // Novo
   createNoteInFirestore,
-  getPublicNotesFromFirestore, // Renamed
+  getNotesForGroupFromFirestore,
   updateNoteInFirestore,
   deleteNoteFromFirestore,
-  addCommentToFirestore, // New
-  getCommentsFromFirestore, // New
+  addCommentToFirestore,
+  getCommentsFromFirestore,
+  serverTimestamp,
 };

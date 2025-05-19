@@ -17,6 +17,7 @@ import appStyles from "./App.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons"; // Samo faBars
 import { useTranslation } from "react-i18next";
+import { NoteGroupProvider } from "./contexts/NoteGroupContext";
 
 const MOBILE_BREAKPOINT = 768;
 
@@ -105,14 +106,15 @@ function AppContent() {
   );
 }
 
-// App funkcija ostaje ista
 function App() {
   return (
     <Router>
       <AuthProvider>
         <ThemeProvider>
           <LayoutProvider>
-            <AppContent />
+            <NoteGroupProvider>
+              <AppContent />
+            </NoteGroupProvider>
           </LayoutProvider>
         </ThemeProvider>
       </AuthProvider>

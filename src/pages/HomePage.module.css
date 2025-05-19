@@ -1,20 +1,23 @@
 /* src/pages/HomePage.module.css */
 .homePage {
   flex-grow: 1;
-  position: relative; 
-  padding: 0; 
+  position: relative;
+  padding: 0; /* Glavni padding je kontroliran od strane .pageContent i .notesGrid */
+  display: flex; /* Omogućava centriranje poruke ako je to jedini sadržaj */
+  flex-direction: column; /* Za NotesGrid i AddNoteButton */
 }
 
-.loading {
+.loading,
+.noNotesMessageContainer { /* Koristi ovaj kontejner za centriranje poruke */
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  font-size: 1.2em;
-  color: var(--text-secondary);
+  flex-grow: 1; /* Da zauzme dostupan prostor ako nema bilješki */
+  text-align: center;
+  padding: 20px;
 }
 
-.pageTitle {
-  padding: 20px;
-  margin: 0;
+.noNotesMessage { /* Stil za samu poruku */
+  color: var(--text-secondary);
+  font-size: 1.2em;
 }
