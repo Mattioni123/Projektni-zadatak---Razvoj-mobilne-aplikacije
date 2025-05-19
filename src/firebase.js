@@ -119,7 +119,7 @@ const getNotesForGroupFromFirestore = (groupId, callback) => {
   }
   const q = query(
     notesCollectionRef,
-    where("creatorUid", "==", auth.currentUser.uid),
+    // where("creatorUid", "==", auth.currentUser.uid),
     where("groupId", "==", groupId),
     orderBy("createdAt", "desc")
   );

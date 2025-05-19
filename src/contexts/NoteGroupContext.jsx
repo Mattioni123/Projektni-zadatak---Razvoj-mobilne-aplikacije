@@ -34,7 +34,7 @@ export const NoteGroupProvider = ({ children }) => {
       const groupsCollectionRef = collection(db, "noteGroups");
       const q = query(
         groupsCollectionRef,
-        where("creatorUid", "==", currentUser.uid),
+        // where("creatorUid", "==", currentUser.uid), // This line should already be removed or commented out from the previous step
         orderBy("createdAt", "asc")
       );
       const unsubscribe = onSnapshot(
@@ -52,21 +52,29 @@ export const NoteGroupProvider = ({ children }) => {
           setNoteGroups(fetchedGroups);
           setDefaultGroupId(foundDefaultId);
 
-          if (querySnapshot.empty && !foundDefaultId) {
-            const generalGroup = {
-              name: "General",
-              creatorUid: currentUser.uid,
-              createdAt: serverTimestamp(),
-              isDefault: true,
-            };
-            addDoc(collection(db, "noteGroups"), generalGroup)
-              .then((docRef) => {
-                /* Handled by next useEffect */
-              })
-              .catch((error) =>
-                console.error("Error creating default group: ", error)
-              );
-          } else if (
+          // REMOVE OR COMMENT OUT THE FOLLOWING BLOCK:
+          /*
+            if (querySnapshot.empty && !foundDefaultId) {
+              const generalGroup = {
+                name: "General",
+                creatorUid: currentUser.uid,
+                createdAt: serverTimestamp(),
+                isDefault: true,
+              };
+              addDoc(collection(db, "noteGroups"), generalGroup)
+                .then((docRef) => {
+                  // Handled by next useEffect
+                })
+                .catch((error) =>
+                  console.error("Error creating default group: ", error)
+                );
+            } else 
+            */
+          // END OF BLOCK TO REMOVE OR COMMENT OUT
+
+          // The rest of the logic to set activeGroupId might need adjustment
+          // if you no longer rely on a "General" or default group being present.
+          if (
             foundDefaultId &&
             (!activeGroupId ||
               !fetchedGroups.find((g) => g.id === activeGroupId))
@@ -80,7 +88,6 @@ export const NoteGroupProvider = ({ children }) => {
           ) {
             setActiveGroupId(fetchedGroups[0].id);
           } else if (fetchedGroups.length === 0) {
-            // Ako su sve grupe obrisane
             setActiveGroupId(null);
           }
           setIsLoadingGroups(false);
@@ -97,7 +104,7 @@ export const NoteGroupProvider = ({ children }) => {
       setDefaultGroupId(null);
       setIsLoadingGroups(false);
     }
-  }, [currentUser]); // Samo currentUser kao dependency
+  }, [currentUser]); // Dependency array
 
   useEffect(() => {
     // Ako je aktivna grupa obrisana, postavi defaultnu ili prvu dostupnu kao aktivnu
