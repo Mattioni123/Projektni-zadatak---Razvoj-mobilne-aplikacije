@@ -8,7 +8,7 @@
   padding: 0;
   width: 260px;
   flex-shrink: 0;
-  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out, background-color 0.3s ease, color 0.3s ease, border-right-color 0.3s ease;
   z-index: 1200;
   box-sizing: border-box;
   border-right: 1px solid var(--border-color);
@@ -115,6 +115,7 @@
   border-bottom: 1px solid var(--border-color);
   /* Osiguraj da se header ne skuplja na 0px visine */
   min-height: 60px; 
+  transition: border-bottom-color 0.3s ease;
 }
 
 .sidebarInternalToggle {
@@ -132,6 +133,7 @@
   width: 40px;
   height: 40px;
   flex-shrink: 0;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 .sidebarInternalToggle:hover {
   color: var(--primary-color);
@@ -155,6 +157,7 @@
   height: 38px;
   max-width: 100%;
   white-space: nowrap; /* Važno da se tekst ne prelama */
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 .newGroupButton:hover {
   color: var(--primary-color);
@@ -180,7 +183,7 @@
   overflow-x: hidden;
   border-bottom: 1px solid var(--border-color);
   max-width: 100%;
-  /* transition ostaje isti */
+  transition: border-bottom-color 0.3s ease;
 }
 .noteGroupsSection .placeholderText {
   color: var(--text-secondary);
@@ -189,6 +192,7 @@
   text-align: center;
   padding: 20px;
   white-space: normal; /* Omogući prelamanje za placeholder */
+  transition: color 0.3s ease;
 }
 
 .noteGroupList {
@@ -226,6 +230,7 @@
   flex-grow: 1;
   overflow: hidden;
   border-radius: 4px;
+  transition: color 0.1s ease;
 }
 
 .noteGroupItem.activeGroup {
@@ -318,6 +323,7 @@
   /* transition ostaje isti */
   max-width: 100%;
   overflow: hidden; /* Važno za skrivanje sadržaja dok se animira opacity */
+  transition: border-top-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 .settingItem, .languageSwitcher, .userInfo {
@@ -328,6 +334,7 @@
   gap: 12px;
   font-size: 0.9em;
   white-space: nowrap;
+  transition: color 0.3s ease;
 }
 .settingItem svg, .languageSwitcher svg, .userInfo svg {
   flex-shrink: 0;
@@ -417,6 +424,7 @@
   width: 90%;
   max-width: 450px;
   position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .modalContent h2 {
@@ -424,12 +432,14 @@
   margin-bottom: 20px;
   color: var(--text-primary);
   font-size: 1.4em;
+  transition: color 0.3s ease;
 }
 .modalContent p {
   margin-bottom: 25px;
   color: var(--text-secondary);
   font-size: 0.95em;
   line-height: 1.5;
+  transition: color 0.3s ease;
 }
 
 .modalCloseButtonTop {
@@ -458,6 +468,7 @@
   color: var(--text-primary);
   font-family: inherit;
   font-size: 1em;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .modalButtonContainer {

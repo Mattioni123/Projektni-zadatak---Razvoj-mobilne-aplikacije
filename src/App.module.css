@@ -31,15 +31,17 @@
 .mainHeader {
   display: flex;
   align-items: center;
-  padding: 0 20px; /* Smanjen padding, gumb će imati svoj padding */
+  padding: 0 20px;
   height: 60px; 
   box-sizing: border-box;
   position: sticky;
   top: 0;
-  background-color: var(--background-primary);
+  background-color: var(--background-primary); /* Mijenja se s temom */
   z-index: 100; 
+  /* Dodajte tranziciju: */
+  transition: background-color 0.3s ease, color 0.3s ease;
   /* Možda border-bottom ako želiš vizualno odvajanje */
-  /* border-bottom: 1px solid var(--border-color); */
+  /* border-bottom: 1px solid var(--border-color); */ /* Border će također tranzicirati ako je definiran s var() */
 }
 
 .headerSidebarToggle { /* Gumb u .mainHeader-u, vidljiv kad je sidebar zatvoren */
@@ -64,11 +66,11 @@
 
 .headerAppName {
   font-size: 1.5em;
-  color: var(--text-primary);
+  color: var(--text-primary); /* Mijenja se s temom */
   margin: 0;
   font-weight: 500;
   white-space: nowrap;
-  transition: margin-left 0.3s ease-in-out; /* Za animaciju ako se pomiče */
+  transition: margin-left 0.3s ease-in-out, color 0.3s ease; /* Dodajte color u tranziciju */
 }
 
 .pageContent {
